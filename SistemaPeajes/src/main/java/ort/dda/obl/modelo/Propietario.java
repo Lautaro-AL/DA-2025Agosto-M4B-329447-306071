@@ -1,7 +1,7 @@
 package ort.dda.obl.modelo;
 
 import java.util.ArrayList;
-
+import java.util.Date;
 import ort.dda.obl.SistemaTransitoException;
 
 public class Propietario extends Usuario {
@@ -77,12 +77,18 @@ public class Propietario extends Usuario {
         this.asignaciones = asignaciones;
     }
 
-    public void agregarVehiculo(Vehiculo v) throws Exception {
-        if (v.getPropietario() != null) {
-            throw new Exception("El vehículo ya tiene un propietario registrado.");
+    public void agregarVehiculo(Vehiculo v) {
+        if (v == null)
+            return;
+        if (vehiculos == null) {
+            vehiculos = new ArrayList<>();
         }
-        v.setPropietario(this);
-        vehiculos.add(v);
+        if (!vehiculos.contains(v)) {
+            vehiculos.add(v);
+        }
+        if (v.getPropietario() != this) {
+            v.setPropietario(this);
+        }
     }
 
     public int getCantidadTransitos() {
@@ -173,6 +179,24 @@ public class Propietario extends Usuario {
             agregarNotificacion(msg);
         }
     }
+
+    public Asignacion getAsignacionParaPuesto(PuestoPeaje puesto) {
+        for (Asignacion a : asignaciones) {
+            if (a.getPuesto().equals(puesto)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+// public void agregarBonificacion(Bonificacion bonificacion, PuestoPeaje puesto) {
+//     if (this.asignaciones == null) {
+//         this.asignaciones = new ArrayList<>();
+//     }
+    
+//     Asignacion nuevaAsignacion = new Asignacion(bonificacion, puesto, new Date(Date.now()));
+//     this.asignaciones.add(nuevaAsignacion);
+// }
 
     public void agregarNotificacion(String mensaje) {
         if (notificaciones == null) {

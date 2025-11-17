@@ -13,31 +13,29 @@ public class SistemaVehiculos {
         categorias.add(new Categoria(tipo));
     }
 
-    public void agregarTarifas(double monto, Categoria categoria) {
+    public void agregarTarifa(double monto, Categoria categoria) {
         tarifas.add(new Tarifa(monto, categoria));
+    }
+
+    public Vehiculo crearVehiculo(String matricula, String modelo, String color, Categoria categoria) {
+        Vehiculo v = new Vehiculo(matricula, modelo, color, categoria, null);
+        vehiculos.add(v);
+        return v;
+    }
+
+    public void vincularVehiculoAPropietario(Vehiculo v, Propietario propietario) {
+        if (v == null || propietario == null)
+            return;
+
+        propietario.agregarVehiculo(v);
+        v.setPropietario(propietario);
     }
 
     public void agregarVehiculo(String matricula, String modelo, String color, Categoria categoria,
             Propietario propietario) {
-        // Creamos el vehículo sin propietario y lo agregamos a la lista global.
-        // Si se pasa un propietario, delegamos en Propietario.agregarVehiculo(v)
-        // para que realice la asignación y validaciones.
-        Vehiculo v = new Vehiculo(matricula, modelo, color, categoria, null);
-        vehiculos.add(v);
+        Vehiculo v = crearVehiculo(matricula, modelo, color, categoria);
         if (propietario != null) {
-            try {
-                // Propietario.agregarVehiculo establecerá el propietario en el vehículo
-                // y lo agregará a la lista de vehículos del propietario.
-                propietario.agregarVehiculo(v);
-            } catch (Exception e) {
-                // Si por alguna razón falla (validación), hacemos un fallback seguro:
-                // asignamos el propietario y lo añadimos a su lista directamente.
-                v.setPropietario(propietario);
-                if (propietario.getVehiculos() == null) {
-                    propietario.setVehiculos(new java.util.ArrayList<Vehiculo>());
-                }
-                propietario.getVehiculos().add(v);
-            }
+            vincularVehiculoAPropietario(v, propietario);
         }
     }
 
@@ -82,8 +80,8 @@ public class SistemaVehiculos {
         return null;
     }
 
-    //GET BONIFICACIONES POR NOMBRE
-    public Bonificacion buscarBonificacionPorNombre(String nombre){
+    // GET BONIFICACIONES POR NOMBRE
+    public Bonificacion buscarBonificacionPorNombre(String nombre) {
         for (Bonificacion b : bonificaciones) {
             if (b.getNombre().equalsIgnoreCase(nombre)) {
                 return b;

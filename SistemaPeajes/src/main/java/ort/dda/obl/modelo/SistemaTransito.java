@@ -1,6 +1,7 @@
 package ort.dda.obl.modelo;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import ort.dda.obl.SistemaTransitoException;
 
@@ -13,22 +14,24 @@ public class SistemaTransito {
         puestosPeaje.add(new PuestoPeaje(nombre, direccion));
     }
 
-    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
             throws SistemaTransitoException {
         if (!propietario.puedeTransitar()) {
             throw new SistemaTransitoException("El propietario no puede realizar tránsitos");
         }
-        registrarTransito(vehiculo, puesto, tarifa, propietario);
+        registrarTransito(vehiculo, puesto, tarifa, propietario, fecha);
         propietario.notificarTransito(vehiculo, puesto);
         propietario.notificarSaldoBajo();
     }
 
-    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
             throws SistemaTransitoException {
         if (vehiculo == null || puesto == null || tarifa == null || propietario == null) {
             throw new SistemaTransitoException("Error - Campos nulos");
         }
-        Transito transito = new Transito(vehiculo, puesto, tarifa);
+        Transito transito = new Transito(vehiculo, puesto, tarifa, fecha);
         double montoFinal = propietario.calcularMontoFinal(transito);
         propietario.descontarSaldoActual(montoFinal);
         transito.setMonto(montoFinal);
@@ -56,5 +59,14 @@ public class SistemaTransito {
         }
         return null;
     }
+
+    // public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) throws SistemaTransitoException {
+    //     if (prop == null || b == null || puesto == null) {
+    //         throw new SistemaTransitoException("Error - Campos nulos");
+    //     }
+        
+    //     prop.agregarBonificacion(b, puesto);
+
+    // }
 
 }

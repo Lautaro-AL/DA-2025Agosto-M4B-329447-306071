@@ -248,7 +248,7 @@ public class DatosPrueba {
             Tarifa t1 = buscarTarifaPorCategoria(tarifas, v1.getCategoria()); // Tarifa automóvil: 50
             if (t1 != null) {
                 try {
-                    fachada.registrarTransito(v1, puestos.get(0), t1, p1);
+                    fachada.registrarTransito(v1, puestos.get(0), t1, p1, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 1: " + p1.getNombreCompleto() + " pasó por " + puestos.get(0).getNombre());
                     transitosExitosos++;
@@ -266,7 +266,7 @@ public class DatosPrueba {
             Tarifa t2 = buscarTarifaPorCategoria(tarifas, v2.getCategoria());
             if (t2 != null) {
                 try {
-                    fachada.registrarTransito(v2, puestos.get(1), t2, p2);
+                    fachada.registrarTransito(v2, puestos.get(1), t2, p2, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 2: " + p2.getNombreCompleto() + " pasó por " + puestos.get(1).getNombre());
                     transitosExitosos++;
@@ -286,7 +286,7 @@ public class DatosPrueba {
 
             if (t3 != null) {
                 try {
-                    fachada.registrarTransito(v3, puestos.get(0), t3, p3);
+                    fachada.registrarTransito(v3, puestos.get(0), t3, p3, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 3: " + p3.getNombreCompleto() + " pasó por " + puestos.get(0).getNombre());
                     transitosExitosos++;
@@ -296,7 +296,7 @@ public class DatosPrueba {
                 }
 
                 try {
-                    fachada.registrarTransito(v3, puestos.get(2), t3, p3);
+                    fachada.registrarTransito(v3, puestos.get(2), t3, p3, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 4: " + p3.getNombreCompleto() + " pasó por " + puestos.get(2).getNombre());
                     transitosExitosos++;
@@ -314,7 +314,7 @@ public class DatosPrueba {
             Tarifa t4 = buscarTarifaPorCategoria(tarifas, v4.getCategoria());
             if (t4 != null) {
                 try {
-                    fachada.registrarTransito(v4, puestos.get(3), t4, p4);
+                    fachada.registrarTransito(v4, puestos.get(3), t4, p4, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 5: " + p4.getNombreCompleto() + " pasó por " + puestos.get(3).getNombre());
                     transitosExitosos++;
@@ -333,7 +333,7 @@ public class DatosPrueba {
             Tarifa t5 = buscarTarifaPorCategoria(tarifas, v5.getCategoria());
             if (t5 != null) {
                 try {
-                    fachada.registrarTransito(v5, puestos.get(4), t5, p5);
+                    fachada.registrarTransito(v5, puestos.get(4), t5, p5, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 6: " + p5.getNombreCompleto() + " pasó por " + puestos.get(4).getNombre());
                     transitosExitosos++;

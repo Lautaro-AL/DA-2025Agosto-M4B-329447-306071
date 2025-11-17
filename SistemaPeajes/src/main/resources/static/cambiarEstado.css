@@ -1,0 +1,59 @@
+/* Styles for Cambiar Estado de Propietario - inspired by emularTransito.css */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #fafafa;
+  color: #333;
+}
+
+.container {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 28px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 { font-size: 26px; color: #222; }
+.subtitulo { color: #666; margin-bottom: 18px; }
+
+.section {
+  background: #ffffff;
+  padding: 18px;
+  margin-top: 16px;
+  border-radius: 10px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.06);
+}
+
+label { font-size: 14px; color: #444; }
+input[type="text"], select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+button { padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+.btn-primary { background: #3b82f6; color: #fff; border: none; }
+.btn-primary:hover { background: #1e66ee; }
+.btn-ghost { background: transparent; border: 1px solid #cbd5e1; color: #333; }
+
+.error-message, .success-message { display: none; padding: 10px; margin-bottom: 12px; border-radius: 6px; }
+.error-message.show { display: block; background: #fee2e2; color: #b91c1c; }
+.success-message.show { display: block; background: #ecfdf5; color: #065f46; }
+
+.propietario-details p { margin: 6px 0; }
+.propietario-details strong { color: #111; }
+
+@media (max-width: 640px) {
+  .container { padding: 16px; }
+}

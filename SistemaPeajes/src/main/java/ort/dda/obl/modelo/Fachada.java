@@ -1,6 +1,7 @@
 package ort.dda.obl.modelo;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import observador.Observable;
 import ort.dda.obl.UsuarioException;
@@ -52,7 +53,7 @@ public class Fachada extends Observable {
         return sAcceso.getPropietarioPorCedula(cedula);
     }
 
-    // get bonificaciones por nombre
+    // // get bonificaciones por nombre
     // public Bonificacion buscarBonificacionXNombre(String nombre){
     // return sVehiculos.buscarBonificacionXNombre(nombre);
     // }
@@ -66,18 +67,20 @@ public class Fachada extends Observable {
         return sTransito.getPuestosPeaje();
     }
 
-    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
             throws SistemaTransitoException {
-        sTransito.registrarTransito(vehiculo, puesto, tarifa, propietario);
+        sTransito.registrarTransito(vehiculo, puesto, tarifa, propietario, fecha);
     }
 
     public PuestoPeaje buscarPuestoPorNombre(String nombrePuesto) {
         return sTransito.buscarPuestoPorNombre(nombrePuesto);
     }
 
-    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
             throws SistemaTransitoException {
-        sTransito.emularTransito(vehiculo, puesto, tarifa, propietario);
+        sTransito.emularTransito(vehiculo, puesto, tarifa, propietario, fecha);
         avisar(Propietario.Eventos.emuloTransito);
     }
 
@@ -91,7 +94,7 @@ public class Fachada extends Observable {
     }
 
     public void agregarTarifa(double monto, Categoria categoria) {
-        sVehiculos.agregarTarifas(monto, categoria);
+        sVehiculos.agregarTarifa(monto, categoria);
     }
 
     public void agregarVehiculo(String matricula, String modelo, String color, Categoria categoria,
@@ -118,5 +121,9 @@ public class Fachada extends Observable {
     public Tarifa buscarTarifaPorMontoYCategoria(double monto, String categoriaVehiculo) {
         return sVehiculos.buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
     }
+
+    // public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) {
+    //     return sTransito.asignarBonificacionAPropietario(prop, b, puesto);
+    // }
 
 }

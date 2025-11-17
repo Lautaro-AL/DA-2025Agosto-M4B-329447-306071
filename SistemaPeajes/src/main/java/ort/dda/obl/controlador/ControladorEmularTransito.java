@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import observador.Observable;
 import observador.Observador;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Scope("session")
@@ -44,7 +46,6 @@ public class ControladorEmularTransito implements Observador {
         Fachada.getInstancia().quitarObservador(this);
     }
 
-    // Paso 1: Cargar lista de puestos
     @PostMapping("/puestos")
     public List<Respuesta> cargarPuestos(@SessionAttribute(name = "usuarioAdmin") Administrador admin)
             throws UsuarioException {
@@ -53,7 +54,6 @@ public class ControladorEmularTransito implements Observador {
 
     }
 
-    // Cargamos tarifas del puesto seleccionado
     @PostMapping("/tarifas")
     public List<Respuesta> cargarTarifas(@SessionAttribute(name = "usuarioAdmin") Administrador admin,
             @RequestParam String nombrePuesto) throws UsuarioException {
@@ -67,38 +67,36 @@ public class ControladorEmularTransito implements Observador {
 
     }
 
-    // emular tránsito
     @PostMapping("/emular")
     public List<Respuesta> emularTransito(@SessionAttribute(name = "usuarioAdmin") Administrador admin,
             @RequestParam String matricula, @RequestParam String nombrePuesto,
             @RequestParam String categoriaVehiculo, @RequestParam double monto,
             @RequestParam String fechaHora) throws UsuarioException {
         try {
-            // Buscar el vehículo por matrícula
+            Date fecha = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+            fecha = sdf.parse(fechaHora);
             Vehiculo vehiculo = Fachada.getInstancia().buscarVehiculoPorMatricula(matricula);
             if (vehiculo == null) {
                 return Respuesta.lista(new Respuesta("error", "No existe el vehículo"));
             }
 
-            // Obtener el propietario del vehículo
             Propietario propietario = vehiculo.getPropietario();
             if (propietario == null) {
                 return Respuesta.lista(new Respuesta("error", "El vehículo no tiene propietario"));
             }
 
-            // Buscar el puesto de peaje
             PuestoPeaje puesto = Fachada.getInstancia().buscarPuestoPorNombre(nombrePuesto);
             if (puesto == null) {
                 return Respuesta.lista(new Respuesta("error", "Puesto no encontrado"));
             }
 
-            // Buscar la tarifa correspondiente
             Tarifa tarifaSeleccionada = Fachada.getInstancia().buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
             if (tarifaSeleccionada == null) {
                 return Respuesta.lista(new Respuesta("error", "Tarifa no encontrada"));
             }
             try {
-                Fachada.getInstancia().emularTransito(vehiculo, puesto, tarifaSeleccionada, propietario);
+                Fachada.getInstancia().emularTransito(vehiculo, puesto, tarifaSeleccionada, propietario, fecha);
             } catch (SistemaTransitoException e) {
                 return Respuesta.lista(new Respuesta("error", e.getMessage()));
             }

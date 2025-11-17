@@ -31,7 +31,7 @@ public class SistemaAcceso {
         return user;
     }
 
-    //get prop por cedula
+    // get prop por cedula
     public Propietario getPropietarioPorCedula(String cedula) {
         for (Propietario p : propietarios) {
             if (p.getCedula().equals(cedula)) {

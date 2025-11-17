@@ -4,17 +4,18 @@ import java.util.Date;
 
 public class Transito {
 
-    private Date fecha = new Date();
+    private Date fecha;
     private Vehiculo vehiculo;
     private PuestoPeaje puestoPeaje;
     private Tarifa tarifa;
     private double monto;
 
-    public Transito(Vehiculo vehiculo, PuestoPeaje puestoPeaje, Tarifa tarifa) {
+    public Transito(Vehiculo vehiculo, PuestoPeaje puestoPeaje, Tarifa tarifa, Date fecha) {
         this.vehiculo = vehiculo;
         this.puestoPeaje = puestoPeaje;
         this.tarifa = tarifa;
         this.monto = tarifa.getMonto();
+        this.fecha = (fecha == null) ? new Date() : fecha;
     }
 
     public Date getFecha() {
