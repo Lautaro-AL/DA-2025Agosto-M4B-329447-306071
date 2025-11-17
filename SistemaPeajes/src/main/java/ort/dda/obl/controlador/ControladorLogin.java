@@ -40,8 +40,12 @@ public class ControladorLogin {
     public List<Respuesta> loginAdministrador(HttpSession sesionHttp,
             @RequestParam String cedula, @RequestParam String password) throws UsuarioException {
         // login al modelo
-        Administrador admin = Fachada.getInstancia().loginAdministrador(cedula,
-                password);
+        Administrador admin;
+        try {
+            admin = Fachada.getInstancia().loginAdministrador(cedula, password);
+        } catch (UsuarioException e) {
+            return Respuesta.lista(new Respuesta("error", e.getMessage()));
+        }
 
         // guardo el admin en la sesionHttp
         sesionHttp.setAttribute("usuarioAdmin", admin);

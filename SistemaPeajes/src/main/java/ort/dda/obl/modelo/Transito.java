@@ -3,6 +3,7 @@ package ort.dda.obl.modelo;
 import java.util.Date;
 
 public class Transito {
+
     private Date fecha = new Date();
     private Vehiculo vehiculo;
     private PuestoPeaje puestoPeaje;

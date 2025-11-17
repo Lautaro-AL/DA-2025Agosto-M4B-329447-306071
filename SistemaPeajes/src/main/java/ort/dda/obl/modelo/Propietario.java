@@ -2,10 +2,12 @@ package ort.dda.obl.modelo;
 
 import java.util.ArrayList;
 
+import ort.dda.obl.SistemaTransitoException;
+
 public class Propietario extends Usuario {
 
     public enum Eventos {
-        eliminarNotificaciones
+        eliminarNotificaciones, emuloTransito
     }
 
     private double saldoActual;
@@ -118,6 +120,65 @@ public class Propietario extends Usuario {
 
     public boolean recibeNotificaciones() {
         return estado != null && estado.recibeNotificaciones();
+    }
+
+    public double calcularMontoFinal(Transito transito) {
+        double montoBase = transito.getTarifa().getMonto();
+        double montoFinal = montoBase;
+
+        if (asignaciones != null) {
+            for (Asignacion a : asignaciones) {
+                double pago = a.calcularDescuento(transito, this);
+                if (pago >= 0 && pago < montoFinal) {
+                    montoFinal = pago;
+                }
+            }
+        }
+        return montoFinal;
+    }
+
+    public void descontarSaldoActual(double monto) throws SistemaTransitoException {
+        if (saldoActual < monto) {
+            throw new SistemaTransitoException("Saldo Insuficiente");
+        }
+        saldoActual -= monto;
+    }
+
+    public void agregarTransito(Transito t) {
+        if (transitos == null) {
+            transitos = new ArrayList<>();
+        }
+        transitos.add(t);
+        avisar(Eventos.emuloTransito);
+    }
+
+    public void notificarTransito(Vehiculo v, PuestoPeaje puesto) {
+        if (!recibeNotificaciones())
+            return;
+
+        String msg = "Pasaste por el puesto " + puesto.getNombre() +
+                " con el vehículo " + v.getMatricula();
+
+        agregarNotificacion(msg);
+    }
+
+    public void notificarSaldoBajo() {
+        if (!recibeNotificaciones())
+            return;
+
+        if (saldoActual < saldoAlerta) {
+            String msg = "Tu saldo actual es $ " + saldoActual +
+                    ". Te recomendamos hacer una recarga.";
+
+            agregarNotificacion(msg);
+        }
+    }
+
+    public void agregarNotificacion(String mensaje) {
+        if (notificaciones == null) {
+            notificaciones = new ArrayList<>();
+        }
+        notificaciones.add(new Notificacion(mensaje));
     }
 
 }

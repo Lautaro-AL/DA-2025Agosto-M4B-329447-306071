@@ -35,12 +35,6 @@ public class PuestoPeaje {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
         PuestoPeaje other = (PuestoPeaje) obj;
         if (nombre == null) {
             if (other.nombre != null)

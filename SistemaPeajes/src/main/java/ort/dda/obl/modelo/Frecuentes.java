@@ -1,5 +1,7 @@
 package ort.dda.obl.modelo;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class Frecuentes extends Bonificacion {
@@ -15,23 +17,31 @@ public class Frecuentes extends Bonificacion {
             return transito.getMonto(); // Sin descuento si no es el puesto asignado
         }
 
-        Date fechaHoy = transito.getFecha();
+        // Fecha del tránsito que se está evaluando  
+        // -->habia que usar el localdate aca a pesar de nunca haberlo dado para tener la hora exacta de esta zona
 
-        // Contar cuántos tránsitos con el mismo vehículo y puesto son de hoy
+        Date fecha = transito.getFecha();
+        LocalDate fechaLocal = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Contar cuántos tránsitos con el mismo vehículo y puesto son del mismo día
         int transitosHoy = 0;
-        for (Transito tr : propietario.getTransitos()) {
-            // Verificar que sea el mismo vehículo y el mismo puesto
-            if (tr.getVehiculo().equals(transito.getVehiculo()) &&
-                    tr.getPuestoPeaje().equals(puestoAsignado)) {
+        if (propietario.getTransitos() != null) {
+            for (Transito tr : propietario.getTransitos()) {
+                // Comparar por matrícula para evitar depender de la identidad de objeto
+                if (tr.getVehiculo() != null && transito.getVehiculo() != null
+                        && tr.getVehiculo().getMatricula().equalsIgnoreCase(transito.getVehiculo().getMatricula())
+                        && tr.getPuestoPeaje() != null
+                        && tr.getPuestoPeaje().getNombre().equals(puestoAsignado.getNombre())) {
 
-                // Comparar si es el mismo día
-                if (fechaHoy.toString().equals(tr.getFecha().toString())) {
-                    transitosHoy++;
+                    LocalDate fechaTr = tr.getFecha().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (fechaLocal.equals(fechaTr)) {
+                        transitosHoy++;
+                    }
                 }
             }
         }
 
-        // Si ya hubo al menos un tránsito hoy → este sería el segundo transito o mas
+        // Si ya hubo al menos un tránsito hoy → este sería el segundo tránsito o más
         // Aplicar 50% de descuento
         if (transitosHoy >= 1) {
             return transito.getMonto() * 0.5;

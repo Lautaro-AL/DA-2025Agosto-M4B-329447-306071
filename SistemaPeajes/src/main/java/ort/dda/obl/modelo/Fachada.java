@@ -47,6 +47,16 @@ public class Fachada extends Observable {
         sAcceso.borrarNotificacionesPropietario(propietario);
     }
 
+    // get propietarios x cedula
+    public Propietario buscarPropXCedula(String cedula) {
+        return sAcceso.getPropietarioPorCedula(cedula);
+    }
+
+    // get bonificaciones por nombre
+    // public Bonificacion buscarBonificacionXNombre(String nombre){
+    // return sVehiculos.buscarBonificacionXNombre(nombre);
+    // }
+
     // DELEGACIONES SISTEMA TRANSITO
     public void agregarPuesto(String nombre, String direccion) {
         sTransito.agregarPuesto(nombre, direccion);
@@ -59,6 +69,16 @@ public class Fachada extends Observable {
     public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
             throws SistemaTransitoException {
         sTransito.registrarTransito(vehiculo, puesto, tarifa, propietario);
+    }
+
+    public PuestoPeaje buscarPuestoPorNombre(String nombrePuesto) {
+        return sTransito.buscarPuestoPorNombre(nombrePuesto);
+    }
+
+    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+            throws SistemaTransitoException {
+        sTransito.emularTransito(vehiculo, puesto, tarifa, propietario);
+        avisar(Propietario.Eventos.emuloTransito);
     }
 
     // DELEGACIONES SISTEMA VEHICULOS
@@ -85,6 +105,18 @@ public class Fachada extends Observable {
 
     public ArrayList<Tarifa> getTarifas() {
         return sVehiculos.getTarifas();
+    }
+
+    public Vehiculo buscarVehiculoPorMatricula(String matricula) {
+        return sVehiculos.buscarVehiculoPorMatricula(matricula);
+    }
+
+    public ArrayList<Tarifa> obtenerTarifasPorPuesto(PuestoPeaje puesto) {
+        return sVehiculos.obtenerTarifasPorPuesto(puesto);
+    }
+
+    public Tarifa buscarTarifaPorMontoYCategoria(double monto, String categoriaVehiculo) {
+        return sVehiculos.buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
     }
 
 }

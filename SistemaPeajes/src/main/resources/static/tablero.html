@@ -106,72 +106,19 @@
     }
 
     function mostrar_vehiculos(vehiculos) {
-      const tbody = document.querySelector("#tablaVehiculos tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < vehiculos.length; i++) {
-        const v = vehiculos[i];
-        const fila = `
-    <tr>
-      <td>${v.matricula}</td>
-      <td>${v.modelo}</td>
-      <td>${v.color}</td>
-      <td>${v.cantTransitos}</td>
-      <td>$ ${v.montoTotal}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaVehiculos").innerHTML = crearTablaDesdeJson(vehiculos);
     }
 
     function mostrar_bonificaciones(bonificaciones) {
-      const tbody = document.querySelector("#tablaBonificaciones tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < bonificaciones.length; i++) {
-        const b = bonificaciones[i];
-        const fila = `
-    <tr>
-      <td>${b.bonificacion}</td>
-      <td>${b.puesto}</td>
-      <td>${b.fechaAsignada}</td> 
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaBonificaciones").innerHTML = crearTablaDesdeJson(bonificaciones);
     }
 
     function mostrar_transitos(transitos) {
-      const tbody = document.querySelector("#tablaTransitos tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < transitos.length; i++) {
-        const t = transitos[i];
-        const fila = `
-    <tr>
-      <td>${t.puestoPeajeNombre}</td>
-      <td>${t.vehiculoMat}</td>
-      <td>${t.categoria}</td>
-      <td>$${t.tarifaMonto}</td>
-      <td>$${t.monto}</td>
-      <td>${t.fecha}</td>
-      <td>${t.hora}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaTransitos").innerHTML = crearTablaDesdeJson(transitos);
     }
 
     function mostrar_notificaciones(notificaciones) {
-      const tbody = document.querySelector("#tablaNotificaciones tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < notificaciones.length; i++) {
-        const n = notificaciones[i];
-        const fila = `
-    <tr>
-      <td>${n.fechaHora}</td>
-      <td>${n.mensaje}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaNotificaciones").innerHTML = crearTablaDesdeJson(notificaciones);
     }
     function borrarNotificaciones() {
       submit(URL_BORRAR_NOTIF,{});

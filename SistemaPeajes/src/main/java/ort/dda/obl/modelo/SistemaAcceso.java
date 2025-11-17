@@ -31,6 +31,16 @@ public class SistemaAcceso {
         return user;
     }
 
+    //get prop por cedula
+    public Propietario getPropietarioPorCedula(String cedula) {
+        for (Propietario p : propietarios) {
+            if (p.getCedula().equals(cedula)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public Administrador loginAdministrador(String cedula, String password) throws UsuarioException {
         Administrador admin = (Administrador) Login(cedula, password, administradores);
         if (admin == null)

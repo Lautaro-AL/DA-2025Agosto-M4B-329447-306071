@@ -6,6 +6,22 @@
     <title>Emular Tránsito</title>
     <link rel="stylesheet" href="emularTransito.css" />
     <script src="vistaWeb.js"></script>
+    <style>
+      .error-message {
+        color: #d32f2f;
+        background-color: #ffebee;
+        padding: 12px 14px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+        border-left: 4px solid #d32f2f;
+        text-align: left;
+        font-size: 14px;
+      }
+      .error-message.show {
+        display: block;
+      }
+    </style>
   </head>
   <body>
     <script src="utilesVista.js"></script>
@@ -21,12 +37,12 @@
         emule un tránsito.
       </p>
 
+      <div id="errorMessage" class="error-message"></div>
+
       <!-- seccion del puesto -->
       <div class="section">
         <h2>Puesto</h2>
-        <select id="selectPuesto" onchange="cargarTarifas()">
-          <option value="">-- Seleccione un puesto --</option>
-        </select>
+        <div id="contenedorPuestos"></div>
       </div>
 
       <!-- seccion de las tarifas del puesto -->
@@ -75,6 +91,7 @@
           <p>
             <strong>Propietario:</strong> <span id="resultPropietario"></span>
           </p>
+          <p><strong>Estado:</strong> <span id="resultEstado"></span></p>
           <p><strong>Categoría:</strong> <span id="resultCategoria"></span></p>
           <p>
             <strong>Bonificación:</strong> <span id="resultBonificacion"></span>
@@ -92,6 +109,7 @@
       <script>
         urlIniciarVista = "/admin/transito/vistaConectada";
         urlCierreVista = "/admin/transito/vistaCerrada";
+        var tarifasActuales = [];
 
         function procesarErrorSubmit(status, text) {
           if (status == 400) {
@@ -99,7 +117,139 @@
             window.location.href = "login-admin.html";
           }
         }
-        //HACER MENU(SETEARLE EL SSE, CREAR LA SESION DESDE AHI), PASARLE LOS DATOS ACA POR DTO YA SABES ÑERY
+
+        function limpiarMensajeError() {
+          const errorDiv = document.getElementById("errorMessage");
+          errorDiv.textContent = "";
+          errorDiv.classList.remove("show");
+        }
+
+        function mostrarMensajeError(texto) {
+          const errorDiv = document.getElementById("errorMessage");
+          errorDiv.textContent = texto;
+          errorDiv.classList.add("show");
+        }
+
+        function volverMenu() {
+          window.location.href = "menu-admin.html";
+        }
+        function mostrar_puestos(puestos) {
+          const contenedor = document.getElementById("contenedorPuestos");
+          contenedor.innerHTML = crearListaDesdeJson({
+            data: puestos,
+            campoMostrar: "nombre",
+            campoValor: "nombre",
+            id: "selectPuesto",
+            mostrarOpcionInicial: true,
+            onSelectItem: (i, obj) => cargarTarifas(obj.nombre),
+          });
+        }
+
+        // Paso 3: Cargar tarifas del puesto seleccionado
+        function cargarTarifas(nombrePuesto) {
+          limpiarMensajeError();
+
+          if (!nombrePuesto || nombrePuesto === "-1") {
+            document.getElementById("seccionTarifas").style.display = "none";
+            return;
+          }
+
+          submit("/admin/transito/tarifas", "nombrePuesto=" + nombrePuesto);
+        }
+
+        function mostrar_tarifas(tarifas) {
+          tarifasActuales = tarifas;
+          const tabla = document.getElementById("tablaTarifas");
+          tabla.innerHTML = "";
+          tarifas.forEach((t) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                      <td>${t.categoria.tipo}</td>
+                      <td>$${t.monto.toFixed(2)}</td>
+                    `;
+            tabla.appendChild(tr);
+          });
+          document.getElementById("seccionTarifas").style.display = "block";
+        }
+
+        // Pasos 4-5: Emular tránsito
+        function emularTransito() {
+          limpiarMensajeError();
+
+          const matricula = document
+            .getElementById("inputMatricula")
+            .value.trim();
+          const puesto = document.getElementById("selectPuesto")?.value;
+          const fechaHora = document.getElementById("inputFechaHora").value;
+
+          if (!matricula)
+            return mostrarMensaje("Por favor ingrese una matrícula.");
+
+          if (!puesto || puesto === "-1")
+            return mostrarMensaje("Debe seleccionar un puesto.");
+
+          if (tarifasActuales.length === 0)
+            return mostrarMensaje("No hay tarifas para este puesto.");
+
+          const cat = tarifasActuales[0].categoria.tipo;
+          const monto = tarifasActuales[0].monto;
+
+          let params =
+            "matricula=" +
+            matricula +
+            "&nombrePuesto=" +
+            puesto +
+            "&categoriaVehiculo=" +
+            cat +
+            "&monto=" +
+            monto;
+
+          if (fechaHora) params += "&fechaHora=" + fechaHora;
+
+          // Confirmación
+          const ok = mostrarConfirmacion(
+            "¿Desea emular el tránsito ahora?",
+            "Continuar",
+            "Cancelar"
+          );
+
+          if (!ok) return;
+
+          submit("/admin/transito/emular", params);
+        }
+
+        function mostrar_resultadoTransito(resultado) {
+          document.getElementById("resultPropietario").textContent =
+            resultado.nombrePropietario;
+          document.getElementById("resultEstado").textContent =
+            resultado.estadoPropietario;
+          document.getElementById("resultCategoria").textContent =
+            resultado.categoriaVehiculo;
+          document.getElementById("resultBonificacion").textContent =
+            resultado.nombreBonificacion;
+          document.getElementById("resultCosto").textContent =
+            "$" + resultado.costoTransito.toFixed(2);
+          document.getElementById("resultSaldo").textContent =
+            "$" + resultado.saldoFinal.toFixed(2);
+          document.getElementById("seccionResultado").style.display = "block";
+
+          // Limpiar inputs después de un tránsito exitoso
+          document.getElementById("inputMatricula").value = "";
+          document.getElementById("inputFechaHora").value = "";
+        }
+
+        function mostrar_error(mensajeError) {
+          mostrarMensajeError(mensajeError);
+        }
+
+        // Cargar puestos cuando la vista se inicializa
+        function primerSubmitFinalizado() {
+          submit("/admin/transito/puestos", "");
+        }
+
+        async function excepcionDeAplicacion(mensaje) {
+          await mostrarMensaje(mensaje);
+        }
       </script>
     </div>
   </body>

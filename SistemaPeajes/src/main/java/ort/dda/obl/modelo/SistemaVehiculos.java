@@ -7,6 +7,7 @@ public class SistemaVehiculos {
     private ArrayList<Vehiculo> vehiculos = new ArrayList<Vehiculo>();
     private ArrayList<Categoria> categorias = new ArrayList<Categoria>();
     private ArrayList<Tarifa> tarifas = new ArrayList<Tarifa>();
+    private ArrayList<Bonificacion> bonificaciones = new ArrayList<Bonificacion>();
 
     public void agregarCategoria(String tipo) {
         categorias.add(new Categoria(tipo));
@@ -50,5 +51,44 @@ public class SistemaVehiculos {
 
     public ArrayList<Tarifa> getTarifas() {
         return tarifas;
+    }
+
+    public Tarifa buscarTarifaPorMontoYCategoria(double monto, String categoriaVehiculo) {
+        if (categoriaVehiculo == null) {
+            return null;
+        }
+        for (Tarifa t : getTarifas()) {
+            if (t.getMonto() == monto && t.getCategoria().getTipo().equals(categoriaVehiculo)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Tarifa> obtenerTarifasPorPuesto(PuestoPeaje puesto) {
+        ArrayList<Tarifa> resultado = new ArrayList<>();
+        for (Tarifa t : getTarifas()) {
+            resultado.add(t);
+        }
+        return resultado;
+    }
+
+    public Vehiculo buscarVehiculoPorMatricula(String matricula) {
+        for (Vehiculo v : getVehiculos()) {
+            if (v.getMatricula().equalsIgnoreCase(matricula)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    //GET BONIFICACIONES POR NOMBRE
+    public Bonificacion buscarBonificacionPorNombre(String nombre){
+        for (Bonificacion b : bonificaciones) {
+            if (b.getNombre().equalsIgnoreCase(nombre)) {
+                return b;
+            }
+        }
+        return null;
     }
 }

@@ -1,8 +1,6 @@
 package ort.dda.obl.dto;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import ort.dda.obl.modelo.Asignacion;
 import ort.dda.obl.modelo.Notificacion;
