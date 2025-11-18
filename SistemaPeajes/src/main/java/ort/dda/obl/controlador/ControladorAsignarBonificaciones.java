@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import observador.Observable;
 import observador.Observador;
 import ort.dda.obl.ConexionNavegador;
+import ort.dda.obl.SistemaTransitoException;
 import ort.dda.obl.UsuarioException;
 import ort.dda.obl.modelo.Asignacion;
 import ort.dda.obl.modelo.Bonificacion;
@@ -80,53 +81,53 @@ public class ControladorAsignarBonificaciones implements Observador {
 		return Respuesta.lista(new Respuesta("propietario", dto));
 	}
 
-	// 	 @PostMapping("/asignar")
-	//  	public List<Respuesta> asignarBonificacion(@SessionAttribute(name =
-	//  	"usuarioAdmin") Object admin,
-	//  	@RequestParam String cedula, @RequestParam(required = false) String bonificacion,
-	//  	@RequestParam(required = false) String nombrePuesto) throws UsuarioException
-	//  		{
- 
-    // 	if (bonificacion == null || bonificacion.trim().isEmpty()) {
-    //     	return Respuesta.lista(new Respuesta("error", "Debe especificar una bonificación"));
-    // 	}
-	// 	if (nombrePuesto == null || nombrePuesto.trim().isEmpty()) {
-    //     return Respuesta.lista(new Respuesta("error", "Debe especificar un puesto"));
-	// 	}
-    
-    // // Buscar propietario
-    // Propietario prop = Fachada.getInstancia().buscarPropXCedula(cedula);
-    // if (prop == null) {
-    //     return Respuesta.lista(new Respuesta("error", "No existe el propietario"));
-    // }
-	//     if (!prop.puedeRecibirBonificaciones()) {
-    //    	 return Respuesta.lista(new Respuesta("error","El propietario esta deshabilitado. No se pueden asignar bonificaciones"));
-    // 	}
+	@PostMapping("/asignar")
+	public List<Respuesta> asignarBonificacion(@SessionAttribute(name = "usuarioAdmin") Object admin,
+			@RequestParam String cedula,
+			@RequestParam(required = false) String bonificacion,
+			@RequestParam(required = false) String nombrePuesto) throws UsuarioException, SistemaTransitoException {
 
-	// 	PuestoPeaje puesto = Fachada.getInstancia().buscarPuestoPorNombre(nombrePuesto);
-    // if (puesto == null) {
-    //     return Respuesta.lista(new Respuesta("error", "Puesto no encontrado"));
-    // }
-    // // si ya tiene una bonificación asignada para ese puesto
-    // if (prop.getAsignaciones() != null) {
-    //     for (Asignacion a : prop.getAsignaciones()) {
-    //         if (a.getPuesto() != null && a.getPuesto().equals(puesto)) {
-    //             return Respuesta.lista(new Respuesta("error",
-    //                     "Ya tiene una bonificación asignada para ese puesto"));
-    //         }
-    //     }
-    // }
-	// //instanciamos la bonificacion para  primero ver si no es nula y despues la asignamos
-	// Bonificacion b = crearBonificacionDesdeNombre(bonificacion);
-    // if (b == null) {
-    //     return Respuesta.lista(new Respuesta("error", "Bonificación no válida"));
-    // }
-	// Fachada.getInstancia().asignarBonificacionAPropietario(prop, b, puesto);
-    // }
+		// se debe especificar una bonificación
+		if (bonificacion == null || bonificacion.trim().isEmpty()) {
+			return Respuesta.lista(new Respuesta("error", "Debe especificar una bonificación"));
+		}
 
-    
-			 
-	
+		// Validación: Debe especificar un puesto
+		if (nombrePuesto == null || nombrePuesto.trim().isEmpty()) {
+			return Respuesta.lista(new Respuesta("error", "Debe especificar un puesto"));
+		}
+
+		// Buscar propietario
+		Propietario prop = Fachada.getInstancia().buscarPropXCedula(cedula);
+		if (prop == null) {
+			return Respuesta.lista(new Respuesta("error", "No existe el propietario"));
+		}
+
+		// Buscar puesto
+		PuestoPeaje puesto = Fachada.getInstancia().buscarPuestoPorNombre(nombrePuesto);
+		if (puesto == null) {
+			return Respuesta.lista(new Respuesta("error", "Puesto no encontrado"));
+		}
+
+		// Crear instancia de Bonificación según nombre
+		Bonificacion b = crearBonificacionDesdeNombre(bonificacion);
+		if (b == null) {
+			return Respuesta.lista(new Respuesta("error", "Bonificación no válida"));
+		}
+
+		// Delegar a la Fachada (patrón Fachada + validaciones)
+		Fachada.getInstancia().asignarBonificacionAPropietario(prop, b, puesto);
+
+		// Actualizar propietario en vista
+		this.propietarioEnVista = prop;
+
+		// Retornar propietario actualizado
+		PropietarioDTO dto = new PropietarioDTO(prop);
+		return Respuesta.lista(
+				new Respuesta("propietario", dto),
+				new Respuesta("exito", "Bonificación asignada correctamente"));
+	}
+
 	private Bonificacion crearBonificacionDesdeNombre(String nombre) {
 		if (nombre == null)
 			return null;
@@ -139,7 +140,6 @@ public class ControladorAsignarBonificaciones implements Observador {
 			return new Exonerados();
 		return null;
 	}
-
 
 	private Respuesta propDTO() {
 		if (this.propietarioEnVista == null)

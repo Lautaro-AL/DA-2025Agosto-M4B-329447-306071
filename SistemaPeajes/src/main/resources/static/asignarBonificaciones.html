@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Asignar Bonificaciones</title>
-    <link rel="stylesheet" href="asignarBonificaciones.css" />
-    <script src="vistaWeb.js"></script>
+   <script src="vistaWeb.js"></script>
     <script src="sse.js"></script>
-    <style s></style>
+    <link rel="stylesheet" href="asignarBonificaciones.css"/>
+
   <body>
     <script src="utilesVista.js"></script>
 
@@ -25,31 +25,41 @@
 
       <!-- Sección de búsqueda -->
       <div class="section">
-        <h2>Buscar Propietario</h2>
-        <div class="form-row">
-          <div>
-            <label>Cédula de identidad:</label>
-            <input type="text" id="inputCedula" placeholder="Ej: 12345678" />
-          </div>
-          <button id="btnBuscar" class="btn-primary">Buscar</button>
-        </div>
+        <h2>Bonificaciones definidas</h2>
+        <div id="contenedorBonificaciones"></div>
       </div>
 
-      <!-- Sección de asignación -->
+      <!-- Sección de puestos -->
       <div class="section">
-        <h2>Asignar Bonificación</h2>
-        <div id="contenedorBonificaciones"></div>
-        <div id="contenedorPuestos" style="margin-top: 15px;"></div>
-        <button id="btnAsignar" class="btn-primary" style="margin-top: 15px; width: 100%;">
-          Asignar Bonificación
-        </button>
+        <h2>Puestos definidos</h2>
+        <div id="contenedorPuestos"></div>
+      </div>
+
+      <!-- Sección de búsqueda del propietario -->
+      <div class="section">
+        <h2>Cédula de identidad</h2>
+        <div class="form-row">
+          <div>
+            <input type="text" id="inputCedula" placeholder="Ej: 12345678" />
+          </div>
+          <button id="btnBuscar" class="btn-primary">Buscar propietario</button>
+        </div>
       </div>
 
       <!-- Sección de detalles del propietario -->
       <div class="section" id="seccionPropietario" style="display: none;">
-        <h2>Datos del Propietario</h2>
+        <h2>Propietario</h2>
         <div id="contenedorDetallesPropietario"></div>
+        
         <div id="contenedorAsignaciones" style="margin-top: 20px;"></div>
+        
+        <div style="margin-top: 20px;">
+          <h3>Asignar nueva bonificación</h3>
+          <p style="color: #666; font-size: 13px;">Seleccione bonificación y puesto en las listas de la izquierda y luego asigne.</p>
+          <button id="btnAsignar" class="btn-primary" style="width: 100%; margin-top: 10px;">
+            Asignar bonificación
+          </button>
+        </div>
       </div>
     </div>
 

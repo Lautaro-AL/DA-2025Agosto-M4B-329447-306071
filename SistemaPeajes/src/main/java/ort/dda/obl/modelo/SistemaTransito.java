@@ -60,13 +60,12 @@ public class SistemaTransito {
         return null;
     }
 
-    // public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) throws SistemaTransitoException {
-    //     if (prop == null || b == null || puesto == null) {
-    //         throw new SistemaTransitoException("Error - Campos nulos");
-    //     }
+     public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) throws SistemaTransitoException {
+         if (prop == null || b == null || puesto == null) {
+             throw new SistemaTransitoException("Error - Campos nulos");
+         }
         
-    //     prop.agregarBonificacion(b, puesto);
-
-    // }
+         prop.agregarBonificacion(b, puesto);
+ }
 
 }

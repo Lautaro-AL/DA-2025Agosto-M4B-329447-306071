@@ -1,75 +1,230 @@
-   .error-message {
-        color: #d32f2f;
-        background-color: #ffebee;
-        padding: 12px 14px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        display: none;
-        border-left: 4px solid #d32f2f;
-        text-align: left;
-        font-size: 14px;
-      }
-      .error-message.show {
-        display: block;
-      }
-      .success-message {
-        color: #2e7d32;
-        background-color: #e8f5e9;
-        padding: 12px 14px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        display: none;
-        border-left: 4px solid #2e7d32;
-        text-align: left;
-        font-size: 14px;
-      }
-      .success-message.show {
-        display: block;
-      }
-      .form-row {
-        display: flex;
-        gap: 15px;
-        align-items: flex-end;
-        margin-top: 10px;
-      }
-      .form-row > div {
-        flex: 1;
-      }
-      .form-row button {
-        flex: 0 0 auto;
-      }
-      .propietario-details {
-        background: #f5f5f5;
-        padding: 15px;
-        border-radius: 6px;
-        margin-top: 10px;
-      }
-      .propietario-details ul {
-        margin: 10px 0 0 0;
-        padding-left: 20px;
-      }
-      .propietario-details li {
-        margin: 5px 0;
-        font-size: 14px;
-      }
-      .controls-section {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        margin-top: 15px;
-      }
-      .controls-section > div {
-        flex: 1;
-        min-width: 200px;
-      }
-      @media (max-width: 768px) {
-        .form-row {
-          flex-direction: column;
-        }
-        .form-row button {
-          width: 100%;
-        }
-        .controls-section {
-          flex-direction: column;
-        }
-      }
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: #3b82f6;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.subtitulo {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+}
+
+.section h3 {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Mensajes de error y éxito */
+.error-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: none;
+  border-left: 4px solid #d32f2f;
+  text-align: left;
+  font-size: 14px;
+}
+
+.error-message.show {
+  display: block;
+}
+
+.success-message {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: none;
+  border-left: 4px solid #2e7d32;
+  text-align: left;
+  font-size: 14px;
+}
+
+.success-message.show {
+  display: block;
+}
+
+/* Formulario */
+.form-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.form-row > div {
+  flex: 1;
+  min-width: 150px;
+}
+
+.form-row button {
+  flex: 0 0 auto;
+  padding: 10px 25px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+select:focus {
+  outline: none;
+  border-color: #0052b3;
+  box-shadow: 0 0 0 3px rgba(0, 82, 179, 0.1);
+}
+
+/* Botones */
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #003d8a;
+}
+
+.btn-primary:active {
+  background-color: #3b82f6;
+}
+
+/* Layout de dos columnas */
+#contenedorBonificaciones {
+  margin-bottom: 15px;
+}
+
+#contenedorPuestos {
+  margin-bottom: 15px;
+}
+
+/* Detalles del propietario */
+.propietario-details {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 10px;
+  border-left: 4px solid #3b82f6;
+}
+
+.propietario-details p {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.propietario-details strong {
+  color: #333;
+}
+
+/* Tabla de bonificaciones asignadas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+table thead {
+  background-color: #f0f0f0;
+  border-bottom: 2px solid #ddd;
+}
+
+table th {
+  padding: 10px;
+  text-align: left;
+  font-weight: bold;
+  color: #333;
+}
+
+table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row > div {
+    width: 100%;
+  }
+
+  .form-row button {
+    width: 100%;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .section {
+    padding: 15px;
+  }
+}

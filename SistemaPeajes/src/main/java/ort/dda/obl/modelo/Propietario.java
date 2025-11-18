@@ -180,6 +180,11 @@ public class Propietario extends Usuario {
         }
     }
 
+    public void notificarEstado(String nuevoEstado) {
+        String mensaje = "Se ha cambiado tu estado en el sistema. Tu estado actual es " + nuevoEstado;
+        agregarNotificacion(mensaje);
+    }
+
     public Asignacion getAsignacionParaPuesto(PuestoPeaje puesto) {
         for (Asignacion a : asignaciones) {
             if (a.getPuesto().equals(puesto)) {
@@ -189,20 +194,20 @@ public class Propietario extends Usuario {
         return null;
     }
 
-// public void agregarBonificacion(Bonificacion bonificacion, PuestoPeaje puesto) {
-//     if (this.asignaciones == null) {
-//         this.asignaciones = new ArrayList<>();
-//     }
-    
-//     Asignacion nuevaAsignacion = new Asignacion(bonificacion, puesto, new Date(Date.now()));
-//     this.asignaciones.add(nuevaAsignacion);
-// }
-
     public void agregarNotificacion(String mensaje) {
         if (notificaciones == null) {
             notificaciones = new ArrayList<>();
         }
         notificaciones.add(new Notificacion(mensaje));
+    }
+
+    public void agregarBonificacion(Bonificacion bonificacion, PuestoPeaje puesto) {
+        if (this.asignaciones == null) {
+            this.asignaciones = new ArrayList<>();
+        }
+
+        Asignacion nuevaAsignacion = new Asignacion(bonificacion, puesto, new Date());
+        this.asignaciones.add(nuevaAsignacion);
     }
 
 }

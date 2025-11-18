@@ -59,4 +59,35 @@ public class SistemaAcceso {
         throw new UsuarioException("Usuario o contraseña incorrectos");
     }
 
+    public void cambiarEstado(Propietario prop, String nuevoEstado) {
+        if (prop == null || nuevoEstado == null) {
+            return;
+        }
+
+        EstadoPropietario nuevoEstadoObj = null;
+
+        switch (nuevoEstado.toUpperCase()) {
+            case "HABILITADO":
+                nuevoEstadoObj = new EstadoHabilitado(prop);
+                break;
+            case "DESHABILITADO":
+                nuevoEstadoObj = new EstadoDeshabilitado(prop);
+                break;
+            case "SUSPENDIDO":
+                nuevoEstadoObj = new EstadoSuspendido(prop);
+                break;
+            case "PENALIZADO":
+                nuevoEstadoObj = new EstadoPenalizado(prop);
+                break;
+            default:
+                return;
+        }
+
+        if (nuevoEstadoObj != null) {
+            prop.cambiarEstado(nuevoEstadoObj);
+            prop.notificarEstado(nuevoEstadoObj.getNombre());
+        }
+
+    }
+
 }

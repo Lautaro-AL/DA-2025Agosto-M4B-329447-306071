@@ -47,6 +47,7 @@ public class Fachada extends Observable {
     public void borrarNotificacionesPropietario(Propietario propietario) {
         sAcceso.borrarNotificacionesPropietario(propietario);
     }
+    
 
     // get propietarios x cedula
     public Propietario buscarPropXCedula(String cedula) {
@@ -122,8 +123,13 @@ public class Fachada extends Observable {
         return sVehiculos.buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
     }
 
-    // public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) {
-    //     return sTransito.asignarBonificacionAPropietario(prop, b, puesto);
-    // }
+    public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto)
+            throws SistemaTransitoException {
+        sTransito.asignarBonificacionAPropietario(prop, b, puesto);
+    }
+
+    public void cambiarEstado(Propietario prop, String nuevoEstado) {
+        sAcceso.cambiarEstado(prop, nuevoEstado);
+    }
 
 }

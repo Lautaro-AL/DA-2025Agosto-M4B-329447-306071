@@ -1,5 +1,5 @@
 package ort.dda.obl.modelo;
-import java.sql.Date;
+import java.util.Date;
 
 public class Asignacion {
     private Bonificacion bonificacion;    // Ej: BonificacionFrecuente
@@ -9,7 +9,7 @@ public class Asignacion {
     public Asignacion(Bonificacion bonificacion, PuestoPeaje puesto, Date fechaAsignada) {
         this.bonificacion = bonificacion;
         this.puesto = puesto;
-        this.fechaAsignada = fechaAsignada;
+        this.fechaAsignada = fechaAsignada ;
     }
 
     public Bonificacion getBonificacion() {

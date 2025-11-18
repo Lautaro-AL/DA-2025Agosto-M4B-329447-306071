@@ -110,13 +110,6 @@
         urlCierreVista = "/admin/transito/vistaCerrada";
         var tarifasActuales = [];
 
-        function procesarErrorSubmit(status, text) {
-          if (status == 400) {
-            //El usuario no ha iniciado sesion
-            window.location.href = "login-admin.html";
-          }
-        }
-
         function limpiarMensajeError() {
           const errorDiv = document.getElementById("errorMessage");
           errorDiv.textContent = "";
