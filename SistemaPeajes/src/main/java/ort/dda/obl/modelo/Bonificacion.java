@@ -1,4 +1,5 @@
 package ort.dda.obl.modelo;
+
 public class Bonificacion {
     private String nombre;
     private TipoBonificacion tipo;

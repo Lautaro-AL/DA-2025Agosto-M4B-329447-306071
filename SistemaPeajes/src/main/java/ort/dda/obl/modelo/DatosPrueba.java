@@ -25,15 +25,45 @@ public class DatosPrueba {
         // alerta
         // ==========================
         fachada.agregarUsuarioPropietario("b", "b", "Carlos López", 2090, 500);
-        fachada.agregarUsuarioPropietario("c", "c", "Ana Martínez", 0, 0);
+        fachada.agregarUsuarioPropietario("c", "c", "Ana Martínez", 3500, 1200);
         // entrada sugerida en el enunciado
         fachada.agregarUsuarioPropietario("23456789", "prop.123", "Usuario Propietario", 2000, 500);
         // adicionales para pruebas
         fachada.agregarUsuarioPropietario("34567890", "clave01", "Marcos Varela", 1500, 300);
-        fachada.agregarUsuarioPropietario("98765432", "clave02", "Lucía Duarte", 50, 100);
+        fachada.agregarUsuarioPropietario("98765432", "clave02", "Lucía Duarte", 1000, 50);
 
         // Obtener referencias a propietarios recién creados para asignarles vehículos
         ArrayList<Propietario> propietarios = fachada.obtenerPropietarios();
+
+        // ==========================
+        // Ajustar estados de propietarios (para pruebas)
+        // - Carlos López (b): Habilitado
+        // - Ana Martínez (c): Deshabilitado
+        // - Usuario Propietario (23456789): Habilitado
+        // - Marcos Varela (34567890): Penalizado
+        // - Lucía Duarte (98765432): Suspendido
+        // ==========================
+        Propietario tmp;
+        tmp = buscarPropietario(propietarios, "b");
+        if (tmp != null) {
+            tmp.cambiarEstado(new EstadoHabilitado(tmp));
+        }
+        tmp = buscarPropietario(propietarios, "c");
+        if (tmp != null) {
+            tmp.cambiarEstado(new EstadoDeshabilitado(tmp));
+        }
+        tmp = buscarPropietario(propietarios, "23456789");
+        if (tmp != null) {
+            tmp.cambiarEstado(new EstadoHabilitado(tmp));
+        }
+        tmp = buscarPropietario(propietarios, "34567890");
+        if (tmp != null) {
+            tmp.cambiarEstado(new EstadoPenalizado(tmp));
+        }
+        tmp = buscarPropietario(propietarios, "98765432");
+        if (tmp != null) {
+            tmp.cambiarEstado(new EstadoSuspendido(tmp));
+        }
 
         // ==========================
         // 3) PUESTOS DE PEAJE (3 puestos)
@@ -218,7 +248,7 @@ public class DatosPrueba {
             Tarifa t1 = buscarTarifaPorCategoria(tarifas, v1.getCategoria()); // Tarifa automóvil: 50
             if (t1 != null) {
                 try {
-                    fachada.registrarTransito(v1, puestos.get(0), t1, p1);
+                    fachada.registrarTransito(v1, puestos.get(0), t1, p1, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 1: " + p1.getNombreCompleto() + " pasó por " + puestos.get(0).getNombre());
                     transitosExitosos++;
@@ -236,7 +266,7 @@ public class DatosPrueba {
             Tarifa t2 = buscarTarifaPorCategoria(tarifas, v2.getCategoria());
             if (t2 != null) {
                 try {
-                    fachada.registrarTransito(v2, puestos.get(1), t2, p2);
+                    fachada.registrarTransito(v2, puestos.get(1), t2, p2, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 2: " + p2.getNombreCompleto() + " pasó por " + puestos.get(1).getNombre());
                     transitosExitosos++;
@@ -256,7 +286,7 @@ public class DatosPrueba {
 
             if (t3 != null) {
                 try {
-                    fachada.registrarTransito(v3, puestos.get(0), t3, p3);
+                    fachada.registrarTransito(v3, puestos.get(0), t3, p3, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 3: " + p3.getNombreCompleto() + " pasó por " + puestos.get(0).getNombre());
                     transitosExitosos++;
@@ -266,7 +296,7 @@ public class DatosPrueba {
                 }
 
                 try {
-                    fachada.registrarTransito(v3, puestos.get(2), t3, p3);
+                    fachada.registrarTransito(v3, puestos.get(2), t3, p3, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 4: " + p3.getNombreCompleto() + " pasó por " + puestos.get(2).getNombre());
                     transitosExitosos++;
@@ -284,7 +314,7 @@ public class DatosPrueba {
             Tarifa t4 = buscarTarifaPorCategoria(tarifas, v4.getCategoria());
             if (t4 != null) {
                 try {
-                    fachada.registrarTransito(v4, puestos.get(3), t4, p4);
+                    fachada.registrarTransito(v4, puestos.get(3), t4, p4, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 5: " + p4.getNombreCompleto() + " pasó por " + puestos.get(3).getNombre());
                     transitosExitosos++;
@@ -303,7 +333,7 @@ public class DatosPrueba {
             Tarifa t5 = buscarTarifaPorCategoria(tarifas, v5.getCategoria());
             if (t5 != null) {
                 try {
-                    fachada.registrarTransito(v5, puestos.get(4), t5, p5);
+                    fachada.registrarTransito(v5, puestos.get(4), t5, p5, new java.util.Date());
                     System.out.println(
                             "✓ Tránsito 6: " + p5.getNombreCompleto() + " pasó por " + puestos.get(4).getNombre());
                     transitosExitosos++;
@@ -320,10 +350,11 @@ public class DatosPrueba {
         System.out.println("✓ Exitosos: " + transitosExitosos);
         System.out.println("✗ Rechazados: " + transitosFallidos);
 
-        // Mostrar saldos finales
+        // Mostrar saldos finales (incluye estado del propietario)
         System.out.println("\n--- Saldos finales ---");
         for (Propietario p : propietarios) {
-            System.out.println(p.getNombreCompleto() + ": $" + p.getSaldoActual());
+            String estadoNombre = p.getEstado() != null ? p.getEstado().getNombre() : "(sin estado)";
+            System.out.println(p.getNombreCompleto() + " (" + estadoNombre + "): $" + p.getSaldoActual());
         }
     }
 
@@ -386,9 +417,10 @@ public class DatosPrueba {
         Propietario p5 = buscarPropietario(propietarios, "98765432");
         if (p5 != null) {
             p5.getNotificaciones().add(new Notificacion(
-                    "Exoneración registrada en Puesto Norte"));
+                "Exoneración registrada en Puesto Norte"));
+            // Actualizar mensaje para reflejar el estado de prueba (Suspendido)
             p5.getNotificaciones().add(new Notificacion(
-                    "Estado actual: Habilitado. Saldo: $50"));
+                "Estado actual: Suspendido. Saldo: $50"));
             notificacionesCargadas += 2;
         }
 

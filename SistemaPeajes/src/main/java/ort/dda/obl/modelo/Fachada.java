@@ -1,10 +1,13 @@
 package ort.dda.obl.modelo;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import observador.Observable;
 import ort.dda.obl.UsuarioException;
 import ort.dda.obl.SistemaTransitoException;
 
-public class Fachada {
+public class Fachada extends Observable {
     private SistemaAcceso sAcceso = new SistemaAcceso();
     private SistemaTransito sTransito = new SistemaTransito();
     private SistemaVehiculos sVehiculos = new SistemaVehiculos();
@@ -41,9 +44,20 @@ public class Fachada {
         return sAcceso.loginAdministrador(cedula, password);
     }
 
-    public void logout(Administrador s) {
-        sAcceso.logout(s);
+    public void borrarNotificacionesPropietario(Propietario propietario) {
+        sAcceso.borrarNotificacionesPropietario(propietario);
     }
+    
+
+    // get propietarios x cedula
+    public Propietario buscarPropXCedula(String cedula) {
+        return sAcceso.getPropietarioPorCedula(cedula);
+    }
+
+    // // get bonificaciones por nombre
+    // public Bonificacion buscarBonificacionXNombre(String nombre){
+    // return sVehiculos.buscarBonificacionXNombre(nombre);
+    // }
 
     // DELEGACIONES SISTEMA TRANSITO
     public void agregarPuesto(String nombre, String direccion) {
@@ -54,9 +68,21 @@ public class Fachada {
         return sTransito.getPuestosPeaje();
     }
 
-    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
             throws SistemaTransitoException {
-        sTransito.registrarTransito(vehiculo, puesto, tarifa, propietario);
+        sTransito.registrarTransito(vehiculo, puesto, tarifa, propietario, fecha);
+    }
+
+    public PuestoPeaje buscarPuestoPorNombre(String nombrePuesto) {
+        return sTransito.buscarPuestoPorNombre(nombrePuesto);
+    }
+
+    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
+            throws SistemaTransitoException {
+        sTransito.emularTransito(vehiculo, puesto, tarifa, propietario, fecha);
+        avisar(Propietario.Eventos.emuloTransito);
     }
 
     // DELEGACIONES SISTEMA VEHICULOS
@@ -69,7 +95,7 @@ public class Fachada {
     }
 
     public void agregarTarifa(double monto, Categoria categoria) {
-        sVehiculos.agregarTarifas(monto, categoria);
+        sVehiculos.agregarTarifa(monto, categoria);
     }
 
     public void agregarVehiculo(String matricula, String modelo, String color, Categoria categoria,
@@ -83,6 +109,27 @@ public class Fachada {
 
     public ArrayList<Tarifa> getTarifas() {
         return sVehiculos.getTarifas();
+    }
+
+    public Vehiculo buscarVehiculoPorMatricula(String matricula) {
+        return sVehiculos.buscarVehiculoPorMatricula(matricula);
+    }
+
+    public ArrayList<Tarifa> obtenerTarifasPorPuesto(PuestoPeaje puesto) {
+        return sVehiculos.obtenerTarifasPorPuesto(puesto);
+    }
+
+    public Tarifa buscarTarifaPorMontoYCategoria(double monto, String categoriaVehiculo) {
+        return sVehiculos.buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
+    }
+
+    public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto)
+            throws SistemaTransitoException {
+        sTransito.asignarBonificacionAPropietario(prop, b, puesto);
+    }
+
+    public void cambiarEstado(Propietario prop, String nuevoEstado) {
+        sAcceso.cambiarEstado(prop, nuevoEstado);
     }
 
 }

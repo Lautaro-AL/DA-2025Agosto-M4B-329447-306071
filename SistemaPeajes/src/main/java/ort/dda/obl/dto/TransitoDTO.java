@@ -1,11 +1,14 @@
 package ort.dda.obl.dto;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import ort.dda.obl.modelo.Transito;
 
 public class TransitoDTO {
-    private Date fecha;
+    private String fecha;
+    private String hora;
     private String vehiculoMat;
     private String puestoPeajeNombre;
     private String categoria;
@@ -13,16 +16,16 @@ public class TransitoDTO {
     private double monto;
 
     public TransitoDTO(Transito t) {
-        this.fecha = t.getFecha();
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+        Date fechaOriginal = t.getFecha();
+        this.fecha = formatoFecha.format(fechaOriginal);
+        this.hora = formatoHora.format(fechaOriginal);
         this.monto = t.getMonto();
         this.vehiculoMat = t.getVehiculo().getMatricula();
         this.puestoPeajeNombre = t.getPuestoPeaje().getNombre();
         this.categoria = t.getVehiculo().getCategoria().getTipo();
         this.tarifaMonto = t.getTarifa().getMonto();
-    }
-
-    public Date getFecha() {
-        return fecha;
     }
 
     public String getVehiculoMat() {
@@ -45,4 +48,11 @@ public class TransitoDTO {
         return monto;
     }
 
+    public String getFecha() {
+        return fecha;
+    }
+
+    public String getHora() {
+        return hora;
+    }
 }

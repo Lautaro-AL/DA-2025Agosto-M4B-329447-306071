@@ -22,9 +22,23 @@ public class SistemaAcceso {
         return propietarios;
     }
 
+    public void borrarNotificacionesPropietario(Propietario propietario) {
+        propietario.borrarNotificaciones();
+    }
+
     public Propietario loginPropetario(String cedula, String password) throws UsuarioException {
         Propietario user = (Propietario) Login(cedula, password, propietarios);
         return user;
+    }
+
+    // get prop por cedula
+    public Propietario getPropietarioPorCedula(String cedula) {
+        for (Propietario p : propietarios) {
+            if (p.getCedula().equals(cedula)) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public Administrador loginAdministrador(String cedula, String password) throws UsuarioException {
@@ -45,8 +59,35 @@ public class SistemaAcceso {
         throw new UsuarioException("Usuario o contraseña incorrectos");
     }
 
-    public void logout(Administrador s) {
-        administradores.remove(s);
+    public void cambiarEstado(Propietario prop, String nuevoEstado) {
+        if (prop == null || nuevoEstado == null) {
+            return;
+        }
+
+        EstadoPropietario nuevoEstadoObj = null;
+
+        switch (nuevoEstado.toUpperCase()) {
+            case "HABILITADO":
+                nuevoEstadoObj = new EstadoHabilitado(prop);
+                break;
+            case "DESHABILITADO":
+                nuevoEstadoObj = new EstadoDeshabilitado(prop);
+                break;
+            case "SUSPENDIDO":
+                nuevoEstadoObj = new EstadoSuspendido(prop);
+                break;
+            case "PENALIZADO":
+                nuevoEstadoObj = new EstadoPenalizado(prop);
+                break;
+            default:
+                return;
+        }
+
+        if (nuevoEstadoObj != null) {
+            prop.cambiarEstado(nuevoEstadoObj);
+            prop.notificarEstado(nuevoEstadoObj.getNombre());
+        }
 
     }
+
 }

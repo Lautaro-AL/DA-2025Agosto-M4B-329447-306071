@@ -1,30 +1,53 @@
 package ort.dda.obl.controlador;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import observador.Observable;
+import observador.Observador;
+import ort.dda.obl.ConexionNavegador;
+import ort.dda.obl.SistemaTransitoException;
 import ort.dda.obl.dto.PropietarioDTO;
+import ort.dda.obl.modelo.Fachada;
 import ort.dda.obl.modelo.Propietario;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
+@Scope("session")
 @RestController
 @RequestMapping("/tablero")
-public class ControladorTablero {
+public class ControladorTablero implements Observador {
+  private Propietario p;
+  private final ConexionNavegador conexionNavegador;
+
+  public ControladorTablero(@Autowired ConexionNavegador conexionNavegador) {
+    this.conexionNavegador = conexionNavegador;
+  }
+
+  @GetMapping(value = "/registrarSSE", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+  public SseEmitter registrarSSE() {
+    conexionNavegador.conectarSSE();
+    return conexionNavegador.getConexionSSE();
+  }
 
   @PostMapping("/vistaConectada")
-  public List<Respuesta> inicializarVista(@SessionAttribute(name = "usuarioPropietario") Propietario prop) {
-
+  public List<Respuesta> inicializarVista(@SessionAttribute(name = "usuarioPropietario") Propietario prop)
+      throws SistemaTransitoException {
+    Fachada.getInstancia().agregarObservador(this);
     if (!prop.puedeIngresar()) {
       return Respuesta.lista(
           new Respuesta("error", "El usuario no puede ingresar al sistema"));
     }
     PropietarioDTO dto = new PropietarioDTO(prop);
-
     return Respuesta.lista(
         new Respuesta("nombreCompleto", dto.getNombreCompleto()),
         new Respuesta("estado", dto.getEstado()),
@@ -35,75 +58,35 @@ public class ControladorTablero {
         new Respuesta("notificaciones", dto.getNotificaciones()));
   }
 
+  @PostMapping("/vistaCerrada")
+  public void vistaCerrada() {
+    Fachada.getInstancia().quitarObservador(this);
+  }
+
   @PostMapping("/borrarNotificaciones")
   public List<Respuesta> borrarNotificaciones(@SessionAttribute(name = "usuarioPropietario") Propietario prop) {
+    Fachada.getInstancia().agregarObservador(this);
+
     if (prop.getNotificaciones().isEmpty()) {
       return Respuesta.lista(
           new Respuesta("error", "No hay notificaciones para borrar"));
     }
-    prop.getNotificaciones().clear();
+    Fachada.getInstancia().borrarNotificacionesPropietario(prop);
+    PropietarioDTO dto = new PropietarioDTO(prop);
     return Respuesta.lista(
-        new Respuesta("exito", "Notificaciones borradas correctamente"),
-        new Respuesta("notificaciones", new ArrayList<>()));
+        new Respuesta("notificaciones", prop.getNotificaciones()));
 
   }
 
-  // private SistemaAcceso sistemaAcceso;
-  // private Sesion sesionActual;
+  private Respuesta propDTO() {
+    return new Respuesta("propietario", new PropietarioDTO(p));
+  }
 
-  // public ControladorTablero(SistemaAcceso sistemaAcceso, Sesion sesionActual) {
-  // this.sistemaAcceso = sistemaAcceso;
-  // this.sesionActual = sesionActual;
-  // }
-
-  // public SistemaAcceso getSistemaAcceso() {
-  // return sistemaAcceso;
-  // }
-
-  // public Sesion getSesionActual() {
-  // return sesionActual;
-  // }
-  // // CU- Ingresar a la app del propietario
-
-  // public Propietario loginPropietario(String cedula, String password) throws
-  // AccesoDenegadoException {
-  // Propietario encontrado = null;
-
-  // for (Propietario p : sistemaAcceso.getPropietarios()) {
-  // if (p.getCedula().equals(cedula) && p.getPassword().equals(password)) {
-  // encontrado = p;
-  // break;
-  // }
-  // }
-  // if (encontrado == null) {
-  // throw new AccesoDenegadoException("No existe el usuario");
-  // }
-
-  // if (!encontrado.getPassword().equals(password)) {
-  // throw new AccesoDenegadoException("La contraseña es incorrecta");
-  // }
-  // // a implementar estado de usuario
-  // if (encontrado.getEstado() == EstadoPropietario.DESHABILITADO) {
-  // throw new AccesoDenegadoException("Usuario deshabilitado, no puede ingresar
-  // al sistema");
-  // }
-  // if (!encontrado.puedeIngresar()) {
-  // throw new AccesoDenegadoException("Usuario deshabilitado, no puede ingresar
-  // al sistema");
-  // }
-  // return encontrado;
-  // }
-
-  // public TableroDTO obtenerTablero(Propietario p) {
-  // TableroDTO dto = new TableroDTO();
-  // dto.setNombre(p.getNombreCompleto());
-  // dto.setEstado(p.getEstado().getNombre());
-  // dto.setSaldo(p.getSaldoActual());
-  // dto.setBonificaciones(p.getAsignaciones());
-  // dto.setVehiculos(p.getVehiculos());
-  // dto.setTransitos(p.getTransitos());
-  // dto.setNotificaciones(p.getNotificaciones());
-  // return dto;
-  // }
+  @Override
+  public void actualizar(Object evento, Observable origen) {
+    if (evento.equals(Propietario.Eventos.eliminarNotificaciones)) {
+      conexionNavegador.enviarJSON(Respuesta.lista(propDTO()));
+    }
+  }
 
 }

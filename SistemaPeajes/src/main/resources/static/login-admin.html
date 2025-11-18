@@ -3,7 +3,6 @@
   <head>
     <link rel="stylesheet" href="styles.css" />
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Admin</title>
     <script src="vistaWeb.js"></script>
@@ -11,18 +10,16 @@
       .error-message {
         color: #d32f2f;
         background-color: #ffebee;
-        padding: 12px;
-        border-radius: 4px;
-        margin-bottom: 15px;
+        padding: 12px 14px;
+        border-radius: 6px;
+        margin-bottom: 20px;
         display: none;
         border-left: 4px solid #d32f2f;
+        text-align: left;
+        font-size: 14px;
       }
       .error-message.show {
         display: block;
-      }
-      .input-group input:focus {
-        border-color: #1976d2;
-        outline: none;
       }
     </style>
   </head>
@@ -38,8 +35,8 @@
         onsubmit="handleLogin(event)"
       >
         <div class="input-group">
-          <label for="username">Usuario</label>
-          <input type="text" id="username" name="username" required />
+          <label for="cedula">Cedula de Identidad</label>
+          <input type="text" id="cedula" name="cedula" required />
         </div>
         <div class="input-group">
           <label for="password">Contraseña</label>
@@ -50,15 +47,15 @@
     </div>
   </body>
   <script>
-    const TITULO_PAGINA = "*** Administracion ***";
-    const URL_SUBMIT = "acceso/loginAdmin";
+    const TITULO_PAGINA = "Administracion";
+    const URL_SUBMIT = "/acceso/loginAdmin";
 
     // Configurar el título cuando se carga la página
     document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("titulo").textContent = TITULO_PAGINA;
     });
 
-    function handleLogin(event) {
+   function handleLogin(event) {
       event.preventDefault();
       limpiarMensajeError();
       submit(URL_SUBMIT, serializarFormulario("formLogin"));
@@ -80,13 +77,15 @@
     function mostrar_loginExitoso(urlDestino) {
       window.location.href = urlDestino;
     }
-    
+
     function mostrar_error(mensajeError) {
       mostrarMensajeError(mensajeError);
     }
-    
+
     async function excepcionDeAplicacion(text) {
       mostrarMensajeError(text);
     }
+
+
   </script>
 </html>

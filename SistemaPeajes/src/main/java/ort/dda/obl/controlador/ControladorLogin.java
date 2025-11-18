@@ -14,7 +14,7 @@ import ort.dda.obl.modelo.Propietario;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/acceso")
 public class ControladorLogin {
 
     @PostMapping("/loginPropietario")
@@ -40,23 +40,25 @@ public class ControladorLogin {
     public List<Respuesta> loginAdministrador(HttpSession sesionHttp,
             @RequestParam String cedula, @RequestParam String password) throws UsuarioException {
         // login al modelo
-        Administrador admin = Fachada.getInstancia().loginAdministrador(cedula,
-                password);
+        Administrador admin;
+        try {
+            admin = Fachada.getInstancia().loginAdministrador(cedula, password);
+        } catch (UsuarioException e) {
+            return Respuesta.lista(new Respuesta("error", e.getMessage()));
+        }
 
         // guardo el admin en la sesionHttp
         sesionHttp.setAttribute("usuarioAdmin", admin);
-        return Respuesta.lista(new Respuesta("loginExitoso",
-                "emularTransito.html")); // completar html admin
+        return Respuesta.lista(new Respuesta("loginExitoso", "menu-admin.html")); // completar html admin
     }
 
     @PostMapping("/logout") // SOlo admin
     public List<Respuesta> logoutAdmin(HttpSession sesionHttp) throws UsuarioException {
-        Administrador sesion = (Administrador) sesionHttp.getAttribute("administrador");
+        Administrador sesion = (Administrador) sesionHttp.getAttribute("usuarioAdmin");
         if (sesion != null) {
-            Fachada.getInstancia().logout(sesion);
-            sesionHttp.removeAttribute("usuarioPropietario");
+            sesionHttp.removeAttribute("usuarioAdmin");
         }
-        return Respuesta.lista(new Respuesta("paginaLogin", "login.html"));
+        return Respuesta.lista(new Respuesta("paginaLogin", "login-admin.html"));
 
     }
 }

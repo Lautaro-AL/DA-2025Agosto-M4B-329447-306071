@@ -1,6 +1,8 @@
 package ort.dda.obl.modelo;
 
-public abstract class Usuario {
+import observador.Observable;
+
+public abstract class Usuario extends Observable {
     private String cedula;
     private String password;
     private String nombreCompleto;

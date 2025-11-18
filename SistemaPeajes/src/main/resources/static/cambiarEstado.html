@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cambiar estado de propietario</title>
+    <link rel="stylesheet" href="cambiarEstado.css" />
+    <script src="vistaWeb.js"></script>
+    <script src="sse.js"></script>
+  </head>
+  <body>
+    <script src="utilesVista.js"></script>
+
+    <div class="container">
+      <div class="header">
+        <h1>Cambiar estado de propietario</h1>
+      </div>
+
+      <p class="subtitulo">
+        Ingrese la cédula, revise el estado actual y seleccione un nuevo estado
+        (datos de ejemplo).
+      </p>
+
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+
+      <!-- Sección de búsqueda -->
+      <div class="section">
+        <h2>Buscar Propietario</h2>
+        <div style="display: flex; gap: 12px; align-items: flex-end">
+          <div style="flex: 1">
+            <label>Cédula de identidad</label>
+            <input type="text" id="inputCedula" placeholder="Ej: 12345678" />
+          </div>
+          <div>
+            <button
+              id="btnBuscar"
+              class="btn-primary"
+              onclick="buscarPropietario()"
+            >
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de cambiar estado -->
+      <div class="section">
+        <h2>Estados definidos</h2>
+        <label>Estado nuevo</label>
+        <div id="contenedorSelectEstados"></div>
+        <div style="margin-top: 12px; display: flex; gap: 10px">
+          <button id="btnCambiar" class="btn-primary" onclick="cambiarEstado()">
+            Cambiar estado
+          </button>
+          <button class="btn-ghost" onclick="volverMenu()">Volver</button>
+        </div>
+        <p style="margin-top: 8px; color: #666; font-size: 13px">
+          El estado actual se mostrará preseleccionado.
+        </p>
+      </div>
+
+      <!-- Sección de detalles del propietario -->
+      <div class="section" id="seccionPropietario" style="display: none">
+        <h2>Propietario</h2>
+        <div id="contenedorDetallesPropietario"></div>
+      </div>
+    </div>
+
+    <script>
+      // Endpoints del controlador
+      urlIniciarVista = "/admin/estado/vistaConectada";
+      urlCierreVista = "/admin/estado/vistaCerrada";
+
+      let propietarioActual = null;
+
+      // Estados disponibles
+      const estados = [
+        { nombre: "HABILITADO", label: "Habilitado" },
+        { nombre: "SUSPENDIDO", label: "Suspendido" },
+        { nombre: "DESHABILITADO", label: "Deshabilitado" },
+        { nombre: "PENALIZADO", label: "Penalizado" },
+      ];
+
+      function procesarErrorSubmit(status, text) {
+        if (status == 400) {
+          window.location.href = "login-admin.html";
+        }
+      }
+
+      function limpiarMensajes() {
+        const errorDiv = document.getElementById("errorMessage");
+        const successDiv = document.getElementById("successMessage");
+        errorDiv.textContent = "";
+        errorDiv.classList.remove("show");
+        successDiv.textContent = "";
+        successDiv.classList.remove("show");
+      }
+
+      function mostrarError(texto) {
+        limpiarMensajes();
+        const errorDiv = document.getElementById("errorMessage");
+        errorDiv.textContent = texto;
+        errorDiv.classList.add("show");
+      }
+
+      function mostrarExito(texto) {
+        limpiarMensajes();
+        const successDiv = document.getElementById("successMessage");
+        successDiv.textContent = texto;
+        successDiv.classList.add("show");
+      }
+
+      function volverMenu() {
+        window.location.href = "menu-admin.html";
+      }
+
+      function mostrar_estados(estadosList) {
+        const contenedor = document.getElementById("contenedorSelectEstados");
+        contenedor.innerHTML = crearListaDesdeJson({
+          data: estadosList,
+          campoMostrar: "label",
+          campoValor: "nombre",
+          multiple: false,
+          mostrarOpcionInicial: true,
+          id: "selectEstados",
+        });
+      }
+
+      function buscarPropietario() {
+        limpiarMensajes();
+        const ced = document.getElementById("inputCedula").value.trim();
+        if (!ced) {
+          mostrarError("Por favor ingrese una cédula.");
+          return;
+        }
+        submit("/admin/estado/buscar", "cedula=" + encodeURIComponent(ced));
+      }
+
+      function cambiarEstado() {
+        limpiarMensajes();
+        if (!propietarioActual) {
+          mostrarError("Busque primero un propietario.");
+          return;
+        }
+        const nuevoEstado = document.getElementById("selectEstados").value;
+        if (!nuevoEstado || nuevoEstado === "-1") {
+          mostrarError("Seleccione un estado válido.");
+          return;
+        }
+        const cedula = propietarioActual.cedula;
+        const body = "cedula=" + cedula + "&nuevoEstado=" + nuevoEstado;
+        submit("/admin/estado/cambiarEstado", body);
+      }
+
+      // Handlers para respuestas del backend (vistaWeb.js invoca estas funciones)
+      function mostrar_propietario(dto) {
+        const seccion = document.getElementById("seccionPropietario");
+        const contenedor = document.getElementById(
+          "contenedorDetallesPropietario"
+        );
+        if (!dto) {
+          seccion.style.display = "none";
+          propietarioActual = null;
+          return;
+        }
+        propietarioActual = dto;
+        // Preseleccionar estado actual si coincide
+        const select = document.getElementById("selectEstados");
+        for (let i = 0; i < select.options.length; i++) {
+          if (
+            select.options[i].value.toUpperCase() ===
+            (dto.estado || "").toUpperCase()
+          ) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+        contenedor.innerHTML = `
+          <div class="propietario-details">
+            <p><strong>Nombre:</strong> ${dto.nombreCompleto || "N/A"}</p>
+            <p><strong>Estado actual:</strong> ${dto.estado || "N/A"}</p>
+            <p><strong>Cédula:</strong> ${dto.cedula || "N/A"}</p>
+            <p><strong>Saldo Actual:</strong> $${(dto.saldoActual || 0).toFixed(
+              2
+            )}</p>
+          </div>
+        `;
+        seccion.style.display = "block";
+        mostrarExito("Propietario cargado.");
+      }
+
+      function mostrar_mensaje(texto) {
+        mostrarExito(texto);
+      }
+
+      function mostrar_error(mensaje) {
+        mostrarError(mensaje);
+      }
+
+      async function excepcionDeAplicacion(mensaje) {
+        await mostrarMensaje(mensaje);
+      }
+
+      // Cargar estados cuando la vista se inicializa
+      function primerSubmitFinalizado() {
+        mostrar_estados(estados);
+      }
+    </script>
+  </body>
+</html>

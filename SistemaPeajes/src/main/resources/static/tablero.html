@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="tablero.css" />
   <title>Tablero de control del propietario</title>
-
+  <script src="sse.js"></script>
   <script src="vistaWeb.js"></script>
 </head>
 
@@ -55,15 +55,18 @@
       <tbody></tbody>
     </table>
     <table id="tablaTransitos">
-      <h2>Tránsitos</h2>
+      <h2>Tránsitos Realizados</h2>
       <thead>
         <tr>
           <th>Puesto</th>
-          <th>Vehículo</th>
+          <th>Matricula</th>
           <th>Categoría</th>
-          <th>Tarifa Base</th>
-          <th>Monto Final</th>
+          <th>Monto Tarifa</th>
+          <th>Bonificacion</th>
+          <th>Monto Bonificacion</th>
+          <th>Monto Pagado</th>
           <th>Fecha</th>
+          <th>Hora</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -86,39 +89,11 @@
   </div>
   </div>
   <script>
-    const URL_TABLERO = "/tablero";
+    urlIniciarVista = "/tablero/vistaConectada";
+    urlCierreVista = "/tablero/vistaCerrada";
+    urlRegistroSSE = "/tablero/registrarSSE"
     const URL_BORRAR_NOTIF = "/tablero/borrarNotificaciones";
     
-    // Función para formatear fechas
-    function formatearFecha(fecha) {
-      if (!fecha) return "N/A";
-      const date = new Date(fecha);
-      const dia = String(date.getDate()).padStart(2, '0');
-      const mes = String(date.getMonth() + 1).padStart(2, '0');
-      const año = date.getFullYear();
-      const horas = String(date.getHours()).padStart(2, '0');
-      const minutos = String(date.getMinutes()).padStart(2, '0');
-      return `${dia}/${mes}/${año} ${horas}:${minutos}`;
-    }
-    
-    // Función para formatear solo la fecha sin hora
-    function formatearFechaSolo(fecha) {
-      if (!fecha) return "N/A";
-      const date = new Date(fecha);
-      const dia = String(date.getDate()).padStart(2, '0');
-      const mes = String(date.getMonth() + 1).padStart(2, '0');
-      const año = date.getFullYear();
-      return `${dia}/${mes}/${año}`;
-    }
-    
-    document.addEventListener("DOMContentLoaded", function () {
-      inicializarTablero();
-    });
-
-    function inicializarTablero() {
-      submit(URL_TABLERO + "/vistaConectada", {});
-    }
-
     function mostrar_nombreCompleto(nombreCompleto) {
       document.getElementById("nombreCompleto").innerHTML = nombreCompleto;
     }
@@ -131,76 +106,30 @@
     }
 
     function mostrar_vehiculos(vehiculos) {
-      const tbody = document.querySelector("#tablaVehiculos tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < vehiculos.length; i++) {
-        const v = vehiculos[i];
-        const fila = `
-    <tr>
-      <td>${v.matricula}</td>
-      <td>${v.modelo}</td>
-      <td>${v.color}</td>
-      <td>${v.cantTransitos}</td>
-      <td>$ ${v.montoTotal}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaVehiculos").innerHTML = crearTablaDesdeJson(vehiculos);
     }
 
     function mostrar_bonificaciones(bonificaciones) {
-      const tbody = document.querySelector("#tablaBonificaciones tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < bonificaciones.length; i++) {
-        const b = bonificaciones[i];
-        const fila = `
-    <tr>
-      <td>${b.bonificacion}</td>
-      <td>${b.puesto}</td>
-      <td>${formatearFechaSolo(b.fechaAsignada)}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaBonificaciones").innerHTML = crearTablaDesdeJson(bonificaciones);
     }
 
     function mostrar_transitos(transitos) {
-      const tbody = document.querySelector("#tablaTransitos tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < transitos.length; i++) {
-        const t = transitos[i];
-        const fila = `
-    <tr>
-      <td>${t.puestoPeajeNombre}</td>
-      <td>${t.vehiculoMat}</td>
-      <td>${t.categoria}</td>
-      <td>$ ${t.tarifaMonto}</td>
-      <td>$ ${t.monto}</td>
-      <td>${formatearFecha(t.fecha)}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaTransitos").innerHTML = crearTablaDesdeJson(transitos);
     }
 
     function mostrar_notificaciones(notificaciones) {
-      const tbody = document.querySelector("#tablaNotificaciones tbody");
-      tbody.innerHTML = "";
-
-      for (let i = 0; i < notificaciones.length; i++) {
-        const n = notificaciones[i];
-        const fila = `
-    <tr>
-      <td>${formatearFecha(n.fechaHora)}</td>
-      <td>${n.mensaje}</td>
-    </tr>`;
-        tbody.innerHTML += fila;
-      }
+      document.getElementById("tablaNotificaciones").innerHTML = crearTablaDesdeJson(notificaciones);
     }
     function borrarNotificaciones() {
-      limpiarMensaje();
-      submit(URL_BORRAR_NOTIF, {});
+      submit(URL_BORRAR_NOTIF,{});
     }
+
+          function procesarErrorSubmit(status, text) {
+        if (status == 400) {
+          //El usuario no ha iniciado sesion
+          window.location.href = "login-propietario.html";
+        }
+      }
   </script>
 </body>
 

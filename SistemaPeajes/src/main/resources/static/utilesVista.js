@@ -1,4 +1,4 @@
-(function() {
+(function () {
   // Crear el HTML del cuadro de diálogo con botones "Sí" y "No"
   const dialogoHTML = `
     <div id="confirmacionDlg" class="dialogo">
@@ -91,65 +91,69 @@
   document.head.appendChild(styleSheet);
 
   // Insertar el HTML del cuadro de diálogo en el cuerpo de la página
-  document.body.insertAdjacentHTML('beforeend', dialogoHTML);
+  document.body.insertAdjacentHTML("beforeend", dialogoHTML);
 
   // Variable para almacenar la respuesta
   let respuestaUsuario = null;
 
   // Función para manejar la respuesta del usuario
-  window.respuesta = function(valor) {
+  window.respuesta = function (valor) {
     respuestaUsuario = valor;
-    document.getElementById('miDialogo').style.display = 'none'; // Cerrar el cuadro de diálogo
+    document.getElementById("miDialogo").style.display = "none"; // Cerrar el cuadro de diálogo
   };
-/*
- * Mostrar dialogo de pregunta al usuario 
- */
+  /*
+   * Mostrar dialogo de pregunta al usuario
+   */
   // Función que muestra el cuadro de diálogo y espera la respuesta de manera simulada
   //Ejemplo de uso: let respuesta = await mostrarConfirmacion("Se ha cerrado la aplicacion en esta ventana", "Intenar volver a abrirla", "Cerrar");
 
- window.mostrarConfirmacion = function(textoPregunta, textoSi = "Sí", textoNo = "No") {
+  window.mostrarConfirmacion = function (
+    textoPregunta,
+    textoSi = "Sí",
+    textoNo = "No"
+  ) {
     return new Promise((resolve) => {
       // Establecer el texto de la pregunta y los botones
-      document.getElementById('textoPregunta').textContent = textoPregunta;
-      document.getElementById('botonSi').textContent = textoSi;
-      document.getElementById('botonNo').textContent = textoNo;
+      document.getElementById("textoPregunta").textContent = textoPregunta;
+      document.getElementById("botonSi").textContent = textoSi;
+      document.getElementById("botonNo").textContent = textoNo;
 
       // Mostrar el cuadro de diálogo
-      document.getElementById('confirmacionDlg').style.display = 'flex';
+      document.getElementById("confirmacionDlg").style.display = "flex";
 
       // Establecer las respuestas de los botones
-      document.getElementById('botonSi').onclick = function() {
+      document.getElementById("botonSi").onclick = function () {
         respuestaUsuario = true;
-        document.getElementById('confirmacionDlg').style.display = 'none'; // Cerrar el cuadro de diálogo
+        document.getElementById("confirmacionDlg").style.display = "none"; // Cerrar el cuadro de diálogo
         resolve(respuestaUsuario); // Resolver la promesa con true
       };
-      document.getElementById('botonNo').onclick = function() {
+      document.getElementById("botonNo").onclick = function () {
         respuestaUsuario = false;
-        document.getElementById('confirmacionDlg').style.display = 'none'; // Cerrar el cuadro de diálogo
+        document.getElementById("confirmacionDlg").style.display = "none"; // Cerrar el cuadro de diálogo
         resolve(respuestaUsuario); // Resolver la promesa con false
       };
     });
   };
   // Función para cerrar el cuadro de diálogo
-  window.cerrarDialogoMensaje = function() {
+  window.cerrarDialogoMensaje = function () {
     // Cerrar el cuadro de diálogo
-    document.getElementById('mensajeDlg').style.display = 'none';
-  }
+    document.getElementById("mensajeDlg").style.display = "none";
+  };
   /*
    * Mostrar dialogo con un mensaje al usuario
    */
 
   // Función que muestra el cuadro de diálogo y devuelve una promesa
-  window.mostrarMensaje = function(textoMensaje) {
+  window.mostrarMensaje = function (textoMensaje) {
     return new Promise((resolve) => {
       // Establecer el texto del mensaje
-      document.getElementById('textoMensaje').textContent = textoMensaje;
+      document.getElementById("textoMensaje").textContent = textoMensaje;
 
       // Mostrar el cuadro de diálogo
-      document.getElementById('mensajeDlg').style.display = 'flex';
+      document.getElementById("mensajeDlg").style.display = "flex";
 
       // Esperar a que el usuario cierre el cuadro de diálogo
-      document.getElementById('botonAceptar').onclick = function() {
+      document.getElementById("botonAceptar").onclick = function () {
         cerrarDialogoMensaje();
         resolve();
       };
@@ -163,33 +167,35 @@
 
 //retorna los campos de un formulario en formato url-encoded para pasarlos a la vista
 function serializarFormulario(idFormulario) {
-    var form = document.getElementById(idFormulario);
-    if (!form) {
-        console.warn("Formulario con id '" + idFormulario + "' no encontrado.");
-        return '';
+  var form = document.getElementById(idFormulario);
+  if (!form) {
+    console.warn("Formulario con id '" + idFormulario + "' no encontrado.");
+    return "";
+  }
+
+  var params = [];
+
+  Array.from(form.elements).forEach(function (el) {
+    if (!el.name) return; // Ignorar campos sin nombre
+
+    // Ignorar botones
+    if (["button", "submit", "reset", "fieldset"].includes(el.type)) return;
+
+    // Ignorar campos deshabilitados manualmente, pero incluir con valor vacío
+    if (el.disabled) {
+      params.push(encodeURIComponent(el.name) + "=");
+      return;
     }
 
-    var params = [];
+    // Para checkboxes y radios: solo si están seleccionados
+    if ((el.type === "checkbox" || el.type === "radio") && !el.checked) return;
 
-    Array.from(form.elements).forEach(function(el) {
-        if (!el.name) return; // Ignorar campos sin nombre
+    params.push(
+      encodeURIComponent(el.name) + "=" + encodeURIComponent(el.value)
+    );
+  });
 
-        // Ignorar botones
-        if (['button', 'submit', 'reset', 'fieldset'].includes(el.type)) return;
-
-        // Ignorar campos deshabilitados manualmente, pero incluir con valor vacío
-        if (el.disabled) {
-            params.push(encodeURIComponent(el.name) + '=');
-            return;
-        }
-
-        // Para checkboxes y radios: solo si están seleccionados
-        if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
-
-        params.push(encodeURIComponent(el.name) + '=' + encodeURIComponent(el.value));
-    });
-
-    return params.join('&');
+  return params.join("&");
 }
 /*
  * ********************** TABLA HTML*************************************
@@ -205,64 +211,67 @@ function serializarFormulario(idFormulario) {
  */
 
 function crearTablaDesdeJson(data, onRowClick) {
-    if (!Array.isArray(data) || data.length === 0) {
-        return '<p>No hay datos para mostrar.</p>';
-    }
+  if (!Array.isArray(data) || data.length === 0) {
+    return "<p>No hay datos para mostrar.</p>";
+  }
 
-    // Obtener todas las claves posibles
-    const todasLasColumnas = Array.from(new Set(data.flatMap(obj => Object.keys(obj))));
+  // Obtener todas las claves posibles
+  const todasLasColumnas = Array.from(
+    new Set(data.flatMap((obj) => Object.keys(obj)))
+  );
 
-    // Filtrar las columnas que tienen al menos un valor no nulo/undefined en alguna fila
-    const columnas = todasLasColumnas.filter(col =>
-        data.some(fila => fila[col] !== null && fila[col] !== undefined)
-    );
+  // Filtrar las columnas que tienen al menos un valor no nulo/undefined en alguna fila
+  const columnas = todasLasColumnas.filter((col) =>
+    data.some((fila) => fila[col] !== null && fila[col] !== undefined)
+  );
 
-    const tablaId = 'tabla-json-' + Math.random().toString(36).substring(2, 10); // ID único
+  const tablaId = "tabla-json-" + Math.random().toString(36).substring(2, 10); // ID único
 
-    // Crear HTML de tabla con ID
-    let html = `<table id="${tablaId}"><thead><tr>`;
-    columnas.forEach(col => {
-        const encabezado = formatearEncabezado(col);
-        html += `<th>${encabezado}</th>`;
+  // Crear HTML de tabla con ID
+  let html = `<table id="${tablaId}"><thead><tr>`;
+  columnas.forEach((col) => {
+    const encabezado = formatearEncabezado(col);
+    html += `<th>${encabezado}</th>`;
+  });
+  html += "</tr></thead><tbody>";
+
+  data.forEach((fila, index) => {
+    html += `<tr data-index="${index}">`;
+    columnas.forEach((col) => {
+      html += `<td>${
+        fila[col] !== undefined && fila[col] !== null ? fila[col] : ""
+      }</td>`;
     });
-    html += '</tr></thead><tbody>';
+    html += "</tr>";
+  });
 
-    data.forEach((fila, index) => {
-        html += `<tr data-index="${index}">`;
-        columnas.forEach(col => {
-            html += `<td>${fila[col] !== undefined && fila[col] !== null ? fila[col] : ''}</td>`;
+  html += "</tbody></table>";
+
+  // Devolver el HTML y dejar que el usuario lo inyecte (para luego instalar eventos)
+  setTimeout(() => {
+    if (typeof onRowClick === "function") {
+      const tabla = document.getElementById(tablaId);
+      if (tabla) {
+        const filas = tabla.querySelectorAll("tbody tr");
+        filas.forEach((fila) => {
+          fila.addEventListener("click", () => {
+            const idx = parseInt(fila.getAttribute("data-index"));
+            onRowClick(idx, data[idx]);
+          });
         });
-        html += '</tr>';
-    });
+      }
+    }
+  }, 0); // Espera a que el DOM lo pinte
 
-    html += '</tbody></table>';
-
-    // Devolver el HTML y dejar que el usuario lo inyecte (para luego instalar eventos)
-    setTimeout(() => {
-        if (typeof onRowClick === 'function') {
-            const tabla = document.getElementById(tablaId);
-            if (tabla) {
-                const filas = tabla.querySelectorAll('tbody tr');
-                filas.forEach(fila => {
-                    fila.addEventListener('click', () => {
-                        const idx = parseInt(fila.getAttribute('data-index'));
-                        onRowClick(idx, data[idx]);
-                    });
-                });
-            }
-        }
-    }, 0); // Espera a que el DOM lo pinte
-
-    return html;
+  return html;
 }
 
 // Función para formatear encabezados separando camelCase con espacios
 function formatearEncabezado(campo) {
-    return campo
-        .replace(/([a-z0-9])([A-Z])/g, '$1 $2')  // inserta espacio entre minúscula/número y mayúscula
-        .replace(/^./, str => str.toUpperCase()); // pone mayúscula inicial
+  return campo
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2") // inserta espacio entre minúscula/número y mayúscula
+    .replace(/^./, (str) => str.toUpperCase()); // pone mayúscula inicial
 }
-
 
 /*
  * ********************** SELECT HTML*************************************
@@ -283,57 +292,62 @@ function formatearEncabezado(campo) {
                  });
  */
 function crearListaDesdeJson({
-    data,
-    campoMostrar,
-    campoValor = null,
-    multiple = false,
-    onSelectItem = null,
-    mostrarOpcionInicial = true, 
-    id = 'lista-json'
+  data,
+  campoMostrar,
+  campoValor = null,
+  multiple = false,
+  onSelectItem = null,
+  mostrarOpcionInicial = true,
+  id = "lista-json",
 }) {
-    if (!Array.isArray(data) || data.length === 0) {
-        return '<p>No hay datos para mostrar.</p>';
+  if (!Array.isArray(data) || data.length === 0) {
+    return "<p>No hay datos para mostrar.</p>";
+  }
+
+  const selectId =
+    id || "lista-json-" + Math.random().toString(36).substring(2, 10);
+  const multipleAttr = multiple ? "multiple" : "";
+  const listaIdMap = new Map(); // valor → { objeto, indice }
+
+  let html = `<select name="${selectId}" id="${selectId}"  ${multipleAttr} style="width: 100%; padding: 8px; margin-top: 10px;">`;
+
+  if (!multiple && mostrarOpcionInicial) {
+    html += `<option value="-1" selected>Seleccione una opción...</option>`;
+  }
+
+  data.forEach((item, index) => {
+    const texto =
+      item[campoMostrar] !== undefined
+        ? item[campoMostrar]
+        : `(sin ${campoMostrar})`;
+    const valor =
+      campoValor && item[campoValor] !== undefined ? item[campoValor] : index;
+    listaIdMap.set(String(valor), { objeto: item, indice: index });
+    html += `<option value="${valor}">${texto}</option>`;
+  });
+
+  html += `</select>`;
+
+  // Listeners
+  setTimeout(() => {
+    const select = document.getElementById(selectId);
+    if (select && typeof onSelectItem === "function") {
+      select.addEventListener("change", () => {
+        const opcionesSeleccionadas = Array.from(select.selectedOptions)
+          .map((opt) => opt.value)
+          .filter((val) => val !== "-1"); // omitir la opción inicial
+
+        opcionesSeleccionadas.forEach((val) => {
+          const entry = listaIdMap.get(val);
+          if (entry) {
+            onSelectItem(entry.indice, entry.objeto);
+          }
+        });
+      });
     }
+  }, 0);
 
-    const selectId = id || 'lista-json-' + Math.random().toString(36).substring(2, 10);
-    const multipleAttr = multiple ? 'multiple' : '';
-    const listaIdMap = new Map(); // valor → { objeto, indice }
-
-    let html = `<select name="${selectId}" id="${selectId}"  ${multipleAttr} style="width: 100%; padding: 8px; margin-top: 10px;">`;
-
-    if (!multiple && mostrarOpcionInicial) {
-        html += `<option value="-1" selected>Seleccione una opción...</option>`;
-    }
-
-    data.forEach((item, index) => {
-        const texto = item[campoMostrar] !== undefined ? item[campoMostrar] : `(sin ${campoMostrar})`;
-        const valor = campoValor && item[campoValor] !== undefined ? item[campoValor] : index;
-        listaIdMap.set(String(valor), { objeto: item, indice: index });
-        html += `<option value="${valor}">${texto}</option>`;
-    });
-
-    html += `</select>`;
-
-    // Listeners
-    setTimeout(() => {
-        const select = document.getElementById(selectId);
-        if (select && typeof onSelectItem === 'function') {
-            select.addEventListener('change', () => {
-                const opcionesSeleccionadas = Array.from(select.selectedOptions)
-                    .map(opt => opt.value)
-                    .filter(val => val !== "-1"); // omitir la opción inicial
-
-                opcionesSeleccionadas.forEach(val => {
-                    const entry = listaIdMap.get(val);
-                    if (entry) {
-                        onSelectItem(entry.indice, entry.objeto);
-                    }
-                });
-            });
-        }
-    }, 0);
-
-    return html;
+  return html;
 }
 function seleccionarPorTexto(idSelect, texto) {
   const select = document.getElementById(idSelect);
@@ -344,4 +358,3 @@ function seleccionarPorTexto(idSelect, texto) {
     }
   }
 }
-

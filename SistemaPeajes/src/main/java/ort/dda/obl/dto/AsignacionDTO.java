@@ -1,5 +1,6 @@
 package ort.dda.obl.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ort.dda.obl.modelo.Asignacion;
@@ -7,12 +8,14 @@ import ort.dda.obl.modelo.Asignacion;
 public class AsignacionDTO {
     private String bonificacion;
     private String puesto;
-    private Date fechaAsignada;
+    private String fechaAsignada;
 
     public AsignacionDTO(Asignacion a) {
+        SimpleDateFormat formatoFechaHora = new SimpleDateFormat("dd/MM/yyyy");
+        Date fechaOriginal = a.getFechaAsignada();
+        fechaAsignada = formatoFechaHora.format(fechaOriginal);
         bonificacion = a.getBonificacion().getNombre();
         puesto = a.getPuesto().getNombre();
-        fechaAsignada = a.getFechaAsignada();
     }
 
     public String getBonificacion() {
@@ -23,7 +26,7 @@ public class AsignacionDTO {
         return puesto;
     }
 
-    public Date getFechaAsignada() {
+    public String getFechaAsignada() {
         return fechaAsignada;
     }
 

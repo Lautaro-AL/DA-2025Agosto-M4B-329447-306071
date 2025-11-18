@@ -1,35 +1,29 @@
 package ort.dda.obl.modelo;
 
-public enum EstadoPropietario {
-    HABILITADO("Habilitado"),
-    DESHABILITADO("Deshabilitado"),
-    SUSPENDIDO("Suspendido"),
-    PENALIZADO("Penalizado");
+public abstract class EstadoPropietario {
+    private Propietario propietario;
 
-    private String nombre;
-
-    EstadoPropietario(String nombre) {
-        this.nombre = nombre;
+    public enum Estados {
+        habilitado, deshabilitado, suspendido, penalizado
     }
 
-    public String getNombre() {
-        return nombre;
+    public EstadoPropietario(Propietario propietario) {
+        this.propietario = propietario;
     }
 
-    // Métodos de comportamiento de los estados
-    public boolean puedeIngresar() {
-        return this != DESHABILITADO;
+    public Propietario getPropietario() {
+        return propietario;
     }
 
-    public boolean puedeTransitar() {
-        return this == HABILITADO || this == PENALIZADO;
-    }
+    // Comportamientos que varían según el estado
+    public abstract boolean puedeIngresar();
 
-    public boolean puedeRecibirBonificaciones() {
-        return this == HABILITADO;
-    }
+    public abstract boolean puedeTransitar();
 
-    public boolean recibeNotificaciones() {
-        return this != PENALIZADO;
-    }
+    public abstract boolean puedeRecibirBonificaciones();
+
+    public abstract boolean recibeNotificaciones();
+
+    public abstract String getNombre();
+
 }

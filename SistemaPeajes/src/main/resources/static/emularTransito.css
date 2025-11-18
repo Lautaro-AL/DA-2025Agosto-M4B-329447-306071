@@ -1,0 +1,145 @@
+/* === GENERAL === */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #fff !important;
+  color: #333;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-weight: 600;
+}
+
+p,
+label {
+  font-size: 14px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+/* === HEADER === */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  font-size: 28px;
+  color: #222;
+}
+
+/* === SUBTITULO === */
+.subtitulo {
+  margin-bottom: 25px;
+  color: #666;
+}
+
+/* === SECCIONES === */
+.section {
+  background: white;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.07);
+}
+
+.section h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+/* === INPUTS Y SELECT === */
+input[type="text"],
+input[type="datetime-local"],
+select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+/* === TABLA === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th {
+  background: #eef1f4;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+  color: #444;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #e6e6e6;
+  font-size: 14px;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* === BOTONES === */
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* Botón principal */
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1e66ee;
+  transform: scale(1.02);
+}
+
+/* Botón volver al menú */
+.btn-salir {
+  background: #444;
+  color: white;
+}
+
+.btn-salir:hover {
+  background: #222;
+  transform: scale(1.02);
+}
+
+/* === RESULTADO === */
+.resultado-info p {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.resultado-info strong {
+  color: #111;
+}

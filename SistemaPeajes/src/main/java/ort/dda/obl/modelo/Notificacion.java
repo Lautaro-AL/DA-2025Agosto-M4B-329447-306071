@@ -3,6 +3,7 @@ package ort.dda.obl.modelo;
 import java.util.Date;
 
 public class Notificacion {
+
     private Date fechaHora = new Date();
     private String mensaje;
 

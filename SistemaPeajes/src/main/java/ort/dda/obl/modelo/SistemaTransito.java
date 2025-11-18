@@ -1,6 +1,7 @@
 package ort.dda.obl.modelo;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import ort.dda.obl.SistemaTransitoException;
 
@@ -13,45 +14,29 @@ public class SistemaTransito {
         puestosPeaje.add(new PuestoPeaje(nombre, direccion));
     }
 
-    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario)
+    public void emularTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
+            throws SistemaTransitoException {
+        if (!propietario.puedeTransitar()) {
+            throw new SistemaTransitoException("El propietario no puede realizar tránsitos");
+        }
+        registrarTransito(vehiculo, puesto, tarifa, propietario, fecha);
+        propietario.notificarTransito(vehiculo, puesto);
+        propietario.notificarSaldoBajo();
+    }
+
+    public void registrarTransito(Vehiculo vehiculo, PuestoPeaje puesto, Tarifa tarifa, Propietario propietario,
+            Date fecha)
             throws SistemaTransitoException {
         if (vehiculo == null || puesto == null || tarifa == null || propietario == null) {
             throw new SistemaTransitoException("Error - Campos nulos");
         }
-        double montoBase = tarifa.getMonto();
-        // Crear el transito con el monto base (antes de aplicar bonificaciones)
-        Transito transito = new Transito(vehiculo, puesto, tarifa);
-        // Calcular monto final aplicando las asignaciones/bonificaciones del
-        // propietario
-        double montoFinal = montoBase;
-        if (propietario.getAsignaciones() != null) {
-            for (Asignacion a : propietario.getAsignaciones()) {
-                try {
-                    double pago = a.calcularDescuento(transito, propietario); // devuelve el monto a pagar según la bonificación
-                    // elegir el menor (mejor descuento)
-                    if (pago >= 0 && pago < montoFinal) {
-                        montoFinal = pago;
-                    }
-                } catch (Exception ex) {
-                    // ignorar asignaciones mal implementadas
-                }
-            }
-        }
-
-        // Verificar saldo con el montoFinal
-        if (propietario.getSaldoActual() < montoFinal) {
-            throw new SistemaTransitoException("Saldo Insuficente");
-        }
-
-        // Ajustar monto del tránsito y registrarlo en el sistema
+        Transito transito = new Transito(vehiculo, puesto, tarifa, fecha);
+        double montoFinal = propietario.calcularMontoFinal(transito);
+        propietario.descontarSaldoActual(montoFinal);
         transito.setMonto(montoFinal);
         transitos.add(transito);
-
-        if (propietario.getTransitos() == null) {
-            propietario.setTransitos(new ArrayList<Transito>());
-        }
-        propietario.getTransitos().add(transito);
-        propietario.setSaldoActual((propietario.getSaldoActual() - montoFinal));
+        propietario.agregarTransito(transito);
     }
 
     public ArrayList<PuestoPeaje> getPuestosPeaje() {
@@ -61,5 +46,26 @@ public class SistemaTransito {
     public ArrayList<Transito> getTransitos() {
         return transitos;
     }
+
+    public PuestoPeaje buscarPuestoPorNombre(String nombrePuesto) {
+
+        if (nombrePuesto == null) {
+            return null;
+        }
+        for (PuestoPeaje p : getPuestosPeaje()) {
+            if (p.getNombre().equals(nombrePuesto)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+     public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) throws SistemaTransitoException {
+         if (prop == null || b == null || puesto == null) {
+             throw new SistemaTransitoException("Error - Campos nulos");
+         }
+        
+         prop.agregarBonificacion(b, puesto);
+ }
 
 }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Principal</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="vistaWeb.js"></script>
+    <script src="sse.js"></script>
+  </head>
+  <body style="display: flex; height: 100vh; margin: 0; padding: 0">
+    <script src="utilesVista.js"></script>
+    <div class="sidebar">
+      <label id="nombreCompleto"> </label>
+      <button onclick="cargarContenido('emularTransito.html')">
+        Emular Transito
+      </button>
+      <button onclick="cargarContenido('asignarBonificaciones.html')">
+        Asignar bonificaciones
+      </button>
+      <button onclick="cargarContenido('cambiarEstado.html')">
+        Cambiar estados
+      </button>
+      <button onclick="logout()">Salir</button>
+    </div>
+    <div class="content">
+      <iframe
+        id="contenidoFrame"
+        src="emularTransito.html"
+        frameborder="0"
+        style="width: 100%; height: 100vh"
+      ></iframe>
+    </div>
+    <script>
+      urlIniciarVista = "/menu/vistaConectada";
+      urlCierreVista = "/logout";
+      urlRegistroSSE = "/menu/registrarSSE";
+
+      function cargarContenido(pagina) {
+        document.getElementById("contenidoFrame").src = pagina;
+      }
+      const spnNombreCompleto = document.getElementById("nombreCompleto");
+
+      function mostrar_nombreCompleto(nombreCompleto) {
+        spnNombreCompleto.innerHTML = nombreCompleto.toUpperCase();
+      }
+      function logout() {
+        submit("/acceso/logout");
+      }
+      function procesarErrorSubmit(status, text) {
+        if (status == 400) {
+          //El usuario no ha iniciado sesion
+          window.location.href = "login-admin.html";
+        }
+      }
+      function mostrar_paginaLogin(url) {
+        window.location.href = url;
+      }
+      //Cuando llega un mensaje SSE lo delego al iFrame actual como una respuesta del controlador
+      function procesarMensajeSSE(mensaje) {
+        var iframe = document.getElementById("contenidoFrame");
+        var iframeWindow = iframe.contentWindow;
+        iframeWindow.procesarResultadosSubmit(mensaje); //asumo que el iFrame tiene vistaWeb.js incluida
+      }
+      //Se ejecuta cuando se cierra la conexion desde el servidor
+      //Si no se define esta funcion, por defecto se "borra" la pagina
+      function conexionSSECerrada(event) {
+        cerrar();
+      }
+      async function cerrar() {
+        let respuesta = await mostrarConfirmacion(
+          "Se ha cerrado la aplicacion en esta ventana",
+          "Intenar volver a abrirla",
+          "Cerrar"
+        );
+        if (respuesta) {
+          location.reload();
+        } else {
+          window.location.href = "login-admin.html";
+        }
+      }
+    </script>
+  </body>
+</html>

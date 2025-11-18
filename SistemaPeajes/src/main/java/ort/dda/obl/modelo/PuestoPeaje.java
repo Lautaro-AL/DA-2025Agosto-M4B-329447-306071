@@ -47,6 +47,11 @@ public class PuestoPeaje {
                 return false;
         } else if (!nombre.equals(other.nombre))
             return false;
+        if (direccion == null) {
+            if (other.direccion != null)
+                return false;
+        } else if (!direccion.equals(other.direccion))
+            return false;
         return true;
     }
 
