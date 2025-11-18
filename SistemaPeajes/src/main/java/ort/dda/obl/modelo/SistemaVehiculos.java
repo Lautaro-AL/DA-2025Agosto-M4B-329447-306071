@@ -63,6 +63,18 @@ public class SistemaVehiculos {
         return null;
     }
 
+    public Tarifa buscarTarifaPorCategoria(String categoriaVehiculo) {
+        if (categoriaVehiculo == null) {
+            return null;
+        }
+        for (Tarifa t : getTarifas()) {
+            if (t.getCategoria() != null && t.getCategoria().getTipo().equals(categoriaVehiculo)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
     public ArrayList<Tarifa> obtenerTarifasPorPuesto(PuestoPeaje puesto) {
         ArrayList<Tarifa> resultado = new ArrayList<>();
         for (Tarifa t : getTarifas()) {
@@ -85,6 +97,15 @@ public class SistemaVehiculos {
         for (Bonificacion b : bonificaciones) {
             if (b.getNombre().equalsIgnoreCase(nombre)) {
                 return b;
+            }
+        }
+        return null;
+    }
+
+    public Tarifa buscarTarifaPorPuestoYCategoria(PuestoPeaje puesto, Categoria categoria) {
+        for (Tarifa t : tarifas) {
+            if (t.getCategoria().equals(categoria)) {
+                return t;
             }
         }
         return null;

@@ -7,7 +7,6 @@ import ort.dda.obl.SistemaTransitoException;
 
 public class SistemaTransito {
     private ArrayList<PuestoPeaje> puestosPeaje = new ArrayList<PuestoPeaje>();
-    private ArrayList<Bonificacion> bonificaciones = new ArrayList<Bonificacion>();
     private ArrayList<Transito> transitos = new ArrayList<Transito>();
 
     public void agregarPuesto(String nombre, String direccion) {
@@ -60,12 +59,21 @@ public class SistemaTransito {
         return null;
     }
 
-     public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto) throws SistemaTransitoException {
-         if (prop == null || b == null || puesto == null) {
-             throw new SistemaTransitoException("Error - Campos nulos");
-         }
-        
-         prop.agregarBonificacion(b, puesto);
- }
+    public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto)
+            throws SistemaTransitoException {
+        if (prop == null || b == null || puesto == null) {
+            throw new SistemaTransitoException("Error - Campos nulos");
+        }
+
+        if (prop.getAsignaciones() != null) {
+            for (Asignacion a : prop.getAsignaciones()) {
+                if (a.getPuesto() != null && a.getPuesto().equals(puesto)) {
+                    throw new SistemaTransitoException("Ya tiene una bonificación asignada para ese puesto");
+                }
+            }
+        }
+
+        prop.agregarBonificacion(b, puesto);
+    }
 
 }

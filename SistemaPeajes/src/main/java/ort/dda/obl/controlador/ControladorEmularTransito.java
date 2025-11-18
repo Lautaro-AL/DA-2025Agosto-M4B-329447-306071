@@ -14,6 +14,7 @@ import ort.dda.obl.modelo.Vehiculo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import observador.Observable;
@@ -68,55 +69,37 @@ public class ControladorEmularTransito implements Observador {
     }
 
     @PostMapping("/emular")
-    public List<Respuesta> emularTransito(@SessionAttribute(name = "usuarioAdmin") Administrador admin,
-            @RequestParam String matricula, @RequestParam String nombrePuesto,
-            @RequestParam String categoriaVehiculo, @RequestParam double monto,
-            @RequestParam String fechaHora) throws UsuarioException {
+    public List<Respuesta> emularTransito(@RequestParam String matricula, @RequestParam String nombrePuesto,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date fechaHora) {
+        Vehiculo vehiculo = Fachada.getInstancia().buscarVehiculoPorMatricula(matricula);
+        if (vehiculo == null)
+            return Respuesta.lista(new Respuesta("error", "No existe el vehículo"));
+        Propietario propietario = vehiculo.getPropietario();
+        if (propietario == null)
+            return Respuesta.lista(new Respuesta("error", "El vehículo no tiene propietario"));
+        PuestoPeaje puesto = Fachada.getInstancia().buscarPuestoPorNombre(nombrePuesto);
+        if (puesto == null)
+            return Respuesta.lista(new Respuesta("error", "No existe el puesto"));
+        Tarifa tarifa = Fachada.getInstancia().buscarTarifaPorPuestoYCategoria(puesto, vehiculo.getCategoria());
+        if (tarifa == null)
+            return Respuesta.lista(new Respuesta("error", "No hay tarifa para la categoría del vehículo"));
+
         try {
-            Date fecha = null;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            fecha = sdf.parse(fechaHora);
-            Vehiculo vehiculo = Fachada.getInstancia().buscarVehiculoPorMatricula(matricula);
-            if (vehiculo == null) {
-                return Respuesta.lista(new Respuesta("error", "No existe el vehículo"));
-            }
-
-            Propietario propietario = vehiculo.getPropietario();
-            if (propietario == null) {
-                return Respuesta.lista(new Respuesta("error", "El vehículo no tiene propietario"));
-            }
-
-            PuestoPeaje puesto = Fachada.getInstancia().buscarPuestoPorNombre(nombrePuesto);
-            if (puesto == null) {
-                return Respuesta.lista(new Respuesta("error", "Puesto no encontrado"));
-            }
-
-            Tarifa tarifaSeleccionada = Fachada.getInstancia().buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
-            if (tarifaSeleccionada == null) {
-                return Respuesta.lista(new Respuesta("error", "Tarifa no encontrada"));
-            }
-            try {
-                Fachada.getInstancia().emularTransito(vehiculo, puesto, tarifaSeleccionada, propietario, fecha);
-            } catch (SistemaTransitoException e) {
-                return Respuesta.lista(new Respuesta("error", e.getMessage()));
-            }
-
-            String nombreBonificacion = "Sin bonificación";
-            if (propietario.getAsignaciones() != null && !propietario.getAsignaciones().isEmpty()) {
-                Asignacion asig = propietario.getAsignaciones().get(0);
-                nombreBonificacion = asig.getBonificacion().getNombre();
-            }
-
-            double costoFinal = monto;
-
-            res = new ResultadoEmulacionDTO(propietario.getNombreCompleto(),
-                    propietario.getEstado().getNombre(), vehiculo.getCategoria().getTipo(), nombreBonificacion,
-                    costoFinal, propietario.getSaldoActual());
-
-            return Respuesta.lista(new Respuesta("resultadoTransito", res));
-        } catch (Exception e) {
-            return Respuesta.lista(new Respuesta("error", "Error al emular tránsito: " + e.getMessage()));
+            Fachada.getInstancia().emularTransito(vehiculo, puesto, tarifa, propietario, fechaHora);
+        } catch (SistemaTransitoException e) {
+            return Respuesta.lista(new Respuesta("error", e.getMessage()));
         }
+        Asignacion asignacion = Fachada.getInstancia().obtenerAsignacionPuesto(propietario, puesto);
+        String nombreBonificacion = "Sin bonificación";
+        if (asignacion != null) {
+            nombreBonificacion = asignacion.getBonificacion().getNombre();
+        }
+        ResultadoEmulacionDTO resultado = new ResultadoEmulacionDTO(propietario.getNombreCompleto(),
+                propietario.getEstado().getNombre(), vehiculo.getCategoria().getTipo(), nombreBonificacion,
+                tarifa.getMonto(), propietario.getSaldoActual());
+
+        return Respuesta.lista(new Respuesta("resultado", resultado));
+
     }
 
     private Respuesta resultadoDTO() {

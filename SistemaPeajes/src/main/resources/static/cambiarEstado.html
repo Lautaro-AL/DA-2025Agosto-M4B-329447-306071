@@ -134,7 +134,7 @@
           mostrarError("Por favor ingrese una cédula.");
           return;
         }
-        submit("/admin/estado/buscar", "cedula=" + encodeURIComponent(ced));
+        submit("/admin/estado/buscar", "cedula=" + ced);
       }
 
       function cambiarEstado() {
@@ -153,7 +153,6 @@
         submit("/admin/estado/cambiarEstado", body);
       }
 
-      // Handlers para respuestas del backend (vistaWeb.js invoca estas funciones)
       function mostrar_propietario(dto) {
         const seccion = document.getElementById("seccionPropietario");
         const contenedor = document.getElementById(
@@ -165,7 +164,7 @@
           return;
         }
         propietarioActual = dto;
-        // Preseleccionar estado actual si coincide
+        
         const select = document.getElementById("selectEstados");
         for (let i = 0; i < select.options.length; i++) {
           if (

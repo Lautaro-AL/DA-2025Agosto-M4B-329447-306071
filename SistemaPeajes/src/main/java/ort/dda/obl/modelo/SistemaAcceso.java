@@ -28,6 +28,10 @@ public class SistemaAcceso {
 
     public Propietario loginPropetario(String cedula, String password) throws UsuarioException {
         Propietario user = (Propietario) Login(cedula, password, propietarios);
+        if (user != null && !user.puedeIngresar()) {
+            throw new UsuarioException("Usuario deshabilitado, no puede ingresar al sistema");
+        }
+
         return user;
     }
 
@@ -56,6 +60,7 @@ public class SistemaAcceso {
                 return usuario;
             }
         }
+
         throw new UsuarioException("Usuario o contraseña incorrectos");
     }
 
@@ -88,6 +93,10 @@ public class SistemaAcceso {
             prop.notificarEstado(nuevoEstadoObj.getNombre());
         }
 
+    }
+
+    public Asignacion obtenerAsignacionPuesto(Propietario prop, PuestoPeaje puesto) {
+        return prop.getAsignacionParaPuesto(puesto);
     }
 
 }

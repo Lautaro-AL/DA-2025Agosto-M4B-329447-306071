@@ -67,10 +67,6 @@ function submit(endPointUrl, urlEncodedData) {
       }
       try {
         const json = JSON.parse(text);
-
-        // Log del JSON ya parseado BORRAR LUEGO LQUTA  
-        console.log("JSON parseado correctamente:");
-        console.log(json);
         if (Array.isArray(json)) {
           //si llega una coleccion de respuestas
           procesarResultadosSubmit(json);

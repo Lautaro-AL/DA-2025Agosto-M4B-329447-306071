@@ -24,13 +24,13 @@ public class DatosPrueba {
         // campos: cédula, contraseña, nombre completo, saldo actual, saldo mínimo
         // alerta
         // ==========================
-        fachada.agregarUsuarioPropietario("b", "b", "Carlos López", 2090, 500);
+        fachada.agregarUsuarioPropietario("b", "b", "Carlos López", 510, 500);
         fachada.agregarUsuarioPropietario("c", "c", "Ana Martínez", 3500, 1200);
         // entrada sugerida en el enunciado
         fachada.agregarUsuarioPropietario("23456789", "prop.123", "Usuario Propietario", 2000, 500);
         // adicionales para pruebas
         fachada.agregarUsuarioPropietario("34567890", "clave01", "Marcos Varela", 1500, 300);
-        fachada.agregarUsuarioPropietario("98765432", "clave02", "Lucía Duarte", 1000, 50);
+        fachada.agregarUsuarioPropietario("98765432", "clave02", "Lucía Duarte", 10, 5);
 
         // Obtener referencias a propietarios recién creados para asignarles vehículos
         ArrayList<Propietario> propietarios = fachada.obtenerPropietarios();
@@ -417,10 +417,10 @@ public class DatosPrueba {
         Propietario p5 = buscarPropietario(propietarios, "98765432");
         if (p5 != null) {
             p5.getNotificaciones().add(new Notificacion(
-                "Exoneración registrada en Puesto Norte"));
+                    "Exoneración registrada en Puesto Norte"));
             // Actualizar mensaje para reflejar el estado de prueba (Suspendido)
             p5.getNotificaciones().add(new Notificacion(
-                "Estado actual: Suspendido. Saldo: $50"));
+                    "Estado actual: Suspendido. Saldo: $50"));
             notificacionesCargadas += 2;
         }
 

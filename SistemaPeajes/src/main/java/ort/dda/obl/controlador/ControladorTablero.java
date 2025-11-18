@@ -43,10 +43,7 @@ public class ControladorTablero implements Observador {
   public List<Respuesta> inicializarVista(@SessionAttribute(name = "usuarioPropietario") Propietario prop)
       throws SistemaTransitoException {
     Fachada.getInstancia().agregarObservador(this);
-    if (!prop.puedeIngresar()) {
-      return Respuesta.lista(
-          new Respuesta("error", "El usuario no puede ingresar al sistema"));
-    }
+
     PropietarioDTO dto = new PropietarioDTO(prop);
     return Respuesta.lista(
         new Respuesta("nombreCompleto", dto.getNombreCompleto()),
