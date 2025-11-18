@@ -58,7 +58,16 @@ public class ControladorAsignarBonificaciones implements Observador {
 	public List<Respuesta> cargarBonificaciones(@SessionAttribute(name = "usuarioAdmin") Object admin)
 			throws UsuarioException {
 
-		return Respuesta.lista(new Respuesta("bonificaciones", 0)); // ToDo
+		// Definimos las bonificaciones disponibles (puede extenderse fácilmente)
+		List<String> bonis = new ArrayList<>();
+		bonis.add(new Trabajadores().getNombre());
+		bonis.add(new Frecuentes().getNombre());
+		bonis.add(new Exonerados().getNombre());
+
+		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
+
+
+
 	}
 
 	@PostMapping("/puestos")
