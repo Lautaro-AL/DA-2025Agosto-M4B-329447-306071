@@ -57,6 +57,7 @@ public class ControladorAsignarBonificaciones implements Observador {
 	@PostMapping("/bonificaciones")
 	public List<Respuesta> cargarBonificaciones(@SessionAttribute(name = "usuarioAdmin") Object admin)
 			throws UsuarioException {
+
 		// Definimos las bonificaciones disponibles (puede extenderse fácilmente)
 		List<String> bonis = new ArrayList<>();
 		bonis.add(new Trabajadores().getNombre());
@@ -64,6 +65,9 @@ public class ControladorAsignarBonificaciones implements Observador {
 		bonis.add(new Exonerados().getNombre());
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
+
+
+
 	}
 
 	@PostMapping("/puestos")
