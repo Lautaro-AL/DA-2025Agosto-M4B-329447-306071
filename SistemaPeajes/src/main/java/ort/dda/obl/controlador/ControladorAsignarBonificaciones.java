@@ -66,6 +66,11 @@ public class ControladorAsignarBonificaciones implements Observador {
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 6868fee606368d9ddbaf5861d17b4abc74c5b589
 	}
 
 	@PostMapping("/puestos")
