@@ -42,47 +42,66 @@ public class ControladorTablero implements Observador {
   @PostMapping("/vistaConectada")
   public List<Respuesta> inicializarVista(@SessionAttribute(name = "usuarioPropietario") Propietario prop)
       throws SistemaTransitoException {
+    // guardar referencia al propietario de esta sesión y registrarse como observador
+    this.p = prop;
+    // Registrarse tanto en la fachada como en el propietario 
     Fachada.getInstancia().agregarObservador(this);
+    prop.agregarObservador(this);
 
-    PropietarioDTO dto = new PropietarioDTO(prop);
     return Respuesta.lista(
-        new Respuesta("nombreCompleto", dto.getNombreCompleto()),
-        new Respuesta("estado", dto.getEstado()),
-        new Respuesta("saldoactual", dto.getSaldoActual()),
-        new Respuesta("bonificaciones", dto.getAsignaciones()),
-        new Respuesta("vehiculos", dto.getVehiculos()),
-        new Respuesta("transitos", dto.getTransitos()),
-        new Respuesta("notificaciones", dto.getNotificaciones()));
+      new Respuesta("nombreCompleto", prop.getNombreCompleto()),
+      new Respuesta("estado", prop.getEstado().getNombre()),
+      new Respuesta("saldoactual", prop.getSaldoActual()),
+      new Respuesta("bonificaciones", new PropietarioDTO(prop).getAsignaciones()),
+      new Respuesta("vehiculos", new PropietarioDTO(prop).getVehiculos()),
+      new Respuesta("transitos", new PropietarioDTO(prop).getTransitos()),
+      new Respuesta("notificaciones", new PropietarioDTO(prop).getNotificaciones()));
   }
 
   @PostMapping("/vistaCerrada")
   public void vistaCerrada() {
     Fachada.getInstancia().quitarObservador(this);
+    if (this.p != null) {
+      this.p.quitarObservador(this);
+    }
+    // limpiar referencia y cerrar la conexión SSE de la sesión
+    this.p = null;
+    conexionNavegador.cerrarConexion();
   }
 
   @PostMapping("/borrarNotificaciones")
   public List<Respuesta> borrarNotificaciones(@SessionAttribute(name = "usuarioPropietario") Propietario prop) {
-    Fachada.getInstancia().agregarObservador(this);
 
     if (prop.getNotificaciones().isEmpty()) {
       return Respuesta.lista(
           new Respuesta("error", "No hay notificaciones para borrar"));
     }
     Fachada.getInstancia().borrarNotificacionesPropietario(prop);
-    PropietarioDTO dto = new PropietarioDTO(prop);
     return Respuesta.lista(
-        new Respuesta("notificaciones", prop.getNotificaciones()));
+      new Respuesta("notificaciones", prop.getNotificaciones()));
 
-  }
-
-  private Respuesta propDTO() {
-    return new Respuesta("propietario", new PropietarioDTO(p));
   }
 
   @Override
   public void actualizar(Object evento, Observable origen) {
-    if (evento.equals(Propietario.Eventos.eliminarNotificaciones)) {
-      conexionNavegador.enviarJSON(Respuesta.lista(propDTO()));
+    try {
+      if (evento.equals(Propietario.Eventos.eliminarNotificaciones)
+          || evento.equals(Propietario.Eventos.emuloTransito)) {
+        if (this.p == null)
+          return;
+        PropietarioDTO dto = new PropietarioDTO(this.p);
+        // mandamos los mismos id que la vista espera para actualizar todos sus componentes
+        conexionNavegador.enviarJSON(Respuesta.lista(
+            new Respuesta("transitos", dto.getTransitos()),
+            new Respuesta("notificaciones", dto.getNotificaciones()),
+            new Respuesta("saldoactual", dto.getSaldoActual()),
+            new Respuesta("bonificaciones", dto.getAsignaciones()),
+            new Respuesta("vehiculos", dto.getVehiculos()),
+            new Respuesta("estado", dto.getEstado())
+        ));
+      }
+    } catch (Exception e) {
+      System.out.println("Error en actualizar SSE: " + e.getMessage());
     }
   }
 

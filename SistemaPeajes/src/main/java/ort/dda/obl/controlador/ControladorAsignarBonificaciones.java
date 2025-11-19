@@ -66,8 +66,6 @@ public class ControladorAsignarBonificaciones implements Observador {
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
 
-	}
-
 	@PostMapping("/puestos")
 	public List<Respuesta> cargarPuestos(@SessionAttribute(name = "usuarioAdmin") Object admin)
 			throws UsuarioException {
