@@ -70,8 +70,11 @@ public class ControladorAsignarBonificaciones implements Observador {
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
 
+<<<<<<< HEAD
 	}
 
+=======
+>>>>>>> ab651a6782c70684be290d645d76f4f0b746bfb7
 	@PostMapping("/puestos")
 	public List<Respuesta> cargarPuestos(@SessionAttribute(name = "usuarioAdmin") Object admin)
 			throws UsuarioException {
