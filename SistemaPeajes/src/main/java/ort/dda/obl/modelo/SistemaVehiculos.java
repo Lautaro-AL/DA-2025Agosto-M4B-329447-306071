@@ -92,16 +92,6 @@ public class SistemaVehiculos {
         return null;
     }
 
-    // GET BONIFICACIONES POR NOMBRE
-    public Bonificacion buscarBonificacionPorNombre(String nombre) {
-        for (Bonificacion b : bonificaciones) {
-            if (b.getNombre().equalsIgnoreCase(nombre)) {
-                return b;
-            }
-        }
-        return null;
-    }
-
     public Tarifa buscarTarifaPorPuestoYCategoria(PuestoPeaje puesto, Categoria categoria) {
         for (Tarifa t : tarifas) {
             if (t.getCategoria().equals(categoria)) {
