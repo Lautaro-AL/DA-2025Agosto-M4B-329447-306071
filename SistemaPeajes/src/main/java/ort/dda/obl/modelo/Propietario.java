@@ -7,7 +7,7 @@ import ort.dda.obl.SistemaTransitoException;
 public class Propietario extends Usuario {
 
     public enum Eventos {
-        eliminarNotificaciones, emuloTransito
+        eliminarNotificaciones, emuloTransito, asignacion, estadoCambio
     }
 
     private double saldoActual;
@@ -184,6 +184,7 @@ public class Propietario extends Usuario {
     public void notificarEstado(String nuevoEstado) {
         String mensaje = "Se ha cambiado tu estado en el sistema. Tu estado actual es " + nuevoEstado;
         agregarNotificacion(mensaje);
+        avisar(Eventos.estadoCambio);
     }
 
     public Asignacion getAsignacionParaPuesto(PuestoPeaje puesto) {
@@ -209,6 +210,7 @@ public class Propietario extends Usuario {
 
         Asignacion nuevaAsignacion = new Asignacion(bonificacion, puesto, new Date());
         this.asignaciones.add(nuevaAsignacion);
+        avisar(Eventos.asignacion);
     }
 
     public int getCantidadTransitosVehiculo(Vehiculo v) {

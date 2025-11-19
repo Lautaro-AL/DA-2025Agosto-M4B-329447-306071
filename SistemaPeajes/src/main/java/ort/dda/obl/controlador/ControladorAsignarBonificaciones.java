@@ -51,6 +51,10 @@ public class ControladorAsignarBonificaciones implements Observador {
 	@PostMapping("/vistaCerrada")
 	public void vistaCerrada() {
 		Fachada.getInstancia().quitarObservador(this);
+		if (this.propietarioEnVista != null) {
+			this.propietarioEnVista.quitarObservador(this);
+			this.propietarioEnVista = null;
+		}
 	}
 
 	// cargar bonificaciones disp.
@@ -66,11 +70,6 @@ public class ControladorAsignarBonificaciones implements Observador {
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 6868fee606368d9ddbaf5861d17b4abc74c5b589
 	}
 
 	@PostMapping("/puestos")
@@ -89,6 +88,8 @@ public class ControladorAsignarBonificaciones implements Observador {
 		}
 		// Guardamos el propietario en la vista para las posibles notificaciones
 		this.propietarioEnVista = prop;
+		// registrarse como observador del propietario para recibir notificaciones de asignacion
+		prop.agregarObservador(this);
 		PropietarioDTO dto = new PropietarioDTO(prop);
 		return Respuesta.lista(new Respuesta("propietario", dto));
 	}
@@ -129,6 +130,7 @@ public class ControladorAsignarBonificaciones implements Observador {
 		}
 
 		this.propietarioEnVista = prop;
+		prop.agregarObservador(this);
 
 		PropietarioDTO dto = new PropietarioDTO(prop);
 		return Respuesta.lista(
@@ -157,7 +159,7 @@ public class ControladorAsignarBonificaciones implements Observador {
 
 	@Override
 	public void actualizar(Object evento, Observable origen) {
-		if (evento != null && evento.equals("asignacion")) {
+		if (evento != null && evento.equals(Propietario.Eventos.asignacion)) {
 			conexionNavegador.enviarJSON(Respuesta.lista(propDTO()));
 		}
 	}

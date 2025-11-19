@@ -85,8 +85,10 @@ public class ControladorTablero implements Observador {
   @Override
   public void actualizar(Object evento, Observable origen) {
     try {
-      if (evento.equals(Propietario.Eventos.eliminarNotificaciones)
-          || evento.equals(Propietario.Eventos.emuloTransito)) {
+        if (evento.equals(Propietario.Eventos.eliminarNotificaciones)
+          || evento.equals(Propietario.Eventos.emuloTransito)
+          || evento.equals(Propietario.Eventos.asignacion)
+          || evento.equals(Propietario.Eventos.estadoCambio)) {
         if (this.p == null)
           return;
         PropietarioDTO dto = new PropietarioDTO(this.p);
