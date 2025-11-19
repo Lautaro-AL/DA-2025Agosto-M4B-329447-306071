@@ -59,11 +59,11 @@
       <thead>
         <tr>
           <th>Puesto</th>
-          <th>Matricula</th>
-          <th>Categoría</th>
+          <th>Matrícula</th>
+          <th>Nombre Tarifa</th>
           <th>Monto Tarifa</th>
-          <th>Bonificacion</th>
-          <th>Monto Bonificacion</th>
+          <th>Bonificación</th>
+          <th>Monto Bonificación</th>
           <th>Monto Pagado</th>
           <th>Fecha</th>
           <th>Hora</th>
@@ -118,6 +118,19 @@
     }
 
     function mostrar_notificaciones(notificaciones) {
+      // ordenar por fecha/hora descendente; formato: dd/MM/yyyy HH:mm
+      function parseFechaHora(s) {
+        if (!s) return new Date(0);
+        try {
+          const parts = s.split(' ');
+          const d = parts[0].split('/');
+          const t = parts[1].split(':');
+          return new Date(parseInt(d[2],10), parseInt(d[1],10)-1, parseInt(d[0],10), parseInt(t[0],10), parseInt(t[1],10));
+        } catch(e) { return new Date(0); }
+      }
+      notificaciones.sort(function(a,b){
+        return parseFechaHora(b.fechaHora) - parseFechaHora(a.fechaHora);
+      });
       document.getElementById("tablaNotificaciones").innerHTML = crearTablaDesdeJson(notificaciones);
     }
     function borrarNotificaciones() {

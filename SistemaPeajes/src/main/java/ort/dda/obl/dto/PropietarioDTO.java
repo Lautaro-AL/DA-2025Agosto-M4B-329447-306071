@@ -32,11 +32,20 @@ public class PropietarioDTO {
             }
         }
 
-        // Tránsitos
+        // Tránsitos -> orden descendente por fecha/hora (sin usar Collections.sort)
         if (prop.getTransitos() != null) {
-
+            ArrayList<Transito> ordenados = new ArrayList<>();
             for (Transito t : prop.getTransitos()) {
-                this.transitos.add(new TransitoDTO(t));
+                // encontrar posición para insertar manteniendo orden descendente (fecha más reciente primero)
+                int pos = 0;
+                while (pos < ordenados.size() && ordenados.get(pos).getFecha().after(t.getFecha())) {
+                    pos++;
+                }
+                ordenados.add(pos, t);
+            }
+
+            for (Transito t : ordenados) {
+                this.transitos.add(new TransitoDTO(t, prop));
             }
         }
 
@@ -47,9 +56,17 @@ public class PropietarioDTO {
             }
         }
 
-        // Notificaciones
+        // Notificaciones -> orden descendente por fecha/hora (sin Collections.sort)
         if (prop.getNotificaciones() != null) {
+            ArrayList<Notificacion> ordenNotif = new ArrayList<>();
             for (Notificacion n : prop.getNotificaciones()) {
+                int pos = 0;
+                while (pos < ordenNotif.size() && ordenNotif.get(pos).getFechaHora().after(n.getFechaHora())) {
+                    pos++;
+                }
+                ordenNotif.add(pos, n);
+            }
+            for (Notificacion n : ordenNotif) {
                 this.notificaciones.add(new NotificacionDTO(n));
             }
         }
