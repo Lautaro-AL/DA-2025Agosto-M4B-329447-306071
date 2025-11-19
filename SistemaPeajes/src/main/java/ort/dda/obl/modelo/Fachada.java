@@ -47,17 +47,18 @@ public class Fachada extends Observable {
     public void borrarNotificacionesPropietario(Propietario propietario) {
         sAcceso.borrarNotificacionesPropietario(propietario);
     }
-    
 
-    // get propietarios x cedula
+    public void cambiarEstado(Propietario prop, String nuevoEstado) {
+        sAcceso.cambiarEstado(prop, nuevoEstado);
+    }
+
     public Propietario buscarPropXCedula(String cedula) {
         return sAcceso.getPropietarioPorCedula(cedula);
     }
 
-    // // get bonificaciones por nombre
-    // public Bonificacion buscarBonificacionXNombre(String nombre){
-    // return sVehiculos.buscarBonificacionXNombre(nombre);
-    // }
+    public Asignacion obtenerAsignacionPuesto(Propietario prop, PuestoPeaje puesto) {
+        return sAcceso.obtenerAsignacionPuesto(prop, puesto);
+    }
 
     // DELEGACIONES SISTEMA TRANSITO
     public void agregarPuesto(String nombre, String direccion) {
@@ -83,6 +84,11 @@ public class Fachada extends Observable {
             throws SistemaTransitoException {
         sTransito.emularTransito(vehiculo, puesto, tarifa, propietario, fecha);
         avisar(Propietario.Eventos.emuloTransito);
+    }
+
+    public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto)
+            throws SistemaTransitoException {
+        sTransito.asignarBonificacionAPropietario(prop, b, puesto);
     }
 
     // DELEGACIONES SISTEMA VEHICULOS
@@ -123,13 +129,12 @@ public class Fachada extends Observable {
         return sVehiculos.buscarTarifaPorMontoYCategoria(monto, categoriaVehiculo);
     }
 
-    public void asignarBonificacionAPropietario(Propietario prop, Bonificacion b, PuestoPeaje puesto)
-            throws SistemaTransitoException {
-        sTransito.asignarBonificacionAPropietario(prop, b, puesto);
+    public Tarifa buscarTarifaPorCategoria(String categoriaVehiculo) {
+        return sVehiculos.buscarTarifaPorCategoria(categoriaVehiculo);
     }
 
-    public void cambiarEstado(Propietario prop, String nuevoEstado) {
-        sAcceso.cambiarEstado(prop, nuevoEstado);
+    public Tarifa buscarTarifaPorPuestoYCategoria(PuestoPeaje puesto, Categoria categoria) {
+        return sVehiculos.buscarTarifaPorPuestoYCategoria(puesto, categoria);
     }
 
 }

@@ -20,19 +20,29 @@ body {
   margin-bottom: 20px;
 }
 
-.header h1 { font-size: 26px; color: #222; }
-.subtitulo { color: #666; margin-bottom: 18px; }
+.header h1 {
+  font-size: 26px;
+  color: #222;
+}
+.subtitulo {
+  color: #666;
+  margin-bottom: 18px;
+}
 
 .section {
   background: #ffffff;
   padding: 18px;
   margin-top: 16px;
   border-radius: 10px;
-  box-shadow: 0px 3px 8px rgba(0,0,0,0.06);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.06);
 }
 
-label { font-size: 14px; color: #444; }
-input[type="text"], select {
+label {
+  font-size: 14px;
+  color: #444;
+}
+input[type="text"],
+select {
   width: 100%;
   padding: 10px 12px;
   margin-top: 8px;
@@ -42,18 +52,53 @@ input[type="text"], select {
   font-size: 14px;
 }
 
-button { padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-.btn-primary { background: #3b82f6; color: #fff; border: none; }
-.btn-primary:hover { background: #1e66ee; }
-.btn-ghost { background: transparent; border: 1px solid #cbd5e1; color: #333; }
+button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-primary {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+}
+.btn-primary:hover {
+  background: #1e66ee;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #333;
+}
 
-.error-message, .success-message { display: none; padding: 10px; margin-bottom: 12px; border-radius: 6px; }
-.error-message.show { display: block; background: #fee2e2; color: #b91c1c; }
-.success-message.show { display: block; background: #ecfdf5; color: #065f46; }
+.error-message,
+.success-message {
+  display: none;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
+.error-message.show {
+  display: block;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.success-message.show {
+  display: block;
+  background: #ecfdf5;
+  color: #065f46;
+}
 
-.propietario-details p { margin: 6px 0; }
-.propietario-details strong { color: #111; }
+.propietario-details p {
+  margin: 6px 0;
+}
+.propietario-details strong {
+  color: #111;
+}
 
 @media (max-width: 640px) {
-  .container { padding: 16px; }
+  .container {
+    padding: 16px;
+  }
 }

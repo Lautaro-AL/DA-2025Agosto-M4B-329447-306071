@@ -30,17 +30,55 @@ label {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  background-color: #3b82f6;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
 }
 
 .header h1 {
   font-size: 28px;
-  color: #222;
+  color: white;
+  margin: 0;
 }
 
 /* === SUBTITULO === */
 .subtitulo {
   margin-bottom: 25px;
   color: #666;
+}
+
+/* === MENSAJES === */
+.error-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: none;
+  border-left: 4px solid #d32f2f;
+  text-align: left;
+  font-size: 14px;
+}
+
+.error-message.show {
+  display: block;
+}
+
+.success-message {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: none;
+  border-left: 4px solid #2e7d32;
+  text-align: left;
+  font-size: 14px;
+}
+
+.success-message.show {
+  display: block;
 }
 
 /* === SECCIONES === */
@@ -75,6 +113,7 @@ input:focus,
 select:focus {
   border-color: #3b82f6;
   outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 82, 179, 0.1);
 }
 
 /* === TABLA === */
@@ -85,11 +124,12 @@ table {
 }
 
 th {
-  background: #eef1f4;
+  background: #f0f0f0;
   padding: 10px;
   text-align: left;
   font-size: 14px;
   color: #444;
+  border-bottom: 2px solid #ddd;
 }
 
 td {
@@ -116,11 +156,16 @@ button {
 .btn-primary {
   background: #3b82f6;
   color: white;
+  font-weight: bold;
 }
 
 .btn-primary:hover {
-  background: #1e66ee;
+  background: #003d8a;
   transform: scale(1.02);
+}
+
+.btn-primary:active {
+  background: #002e66;
 }
 
 /* Botón volver al menú */
@@ -135,9 +180,17 @@ button {
 }
 
 /* === RESULTADO === */
+.resultado-info {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #3b82f6;
+}
+
 .resultado-info p {
   margin: 8px 0;
   font-size: 15px;
+  line-height: 1.6;
 }
 
 .resultado-info strong {

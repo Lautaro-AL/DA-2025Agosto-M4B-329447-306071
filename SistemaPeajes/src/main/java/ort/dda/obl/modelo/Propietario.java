@@ -113,6 +113,7 @@ public class Propietario extends Usuario {
     }
 
     public boolean puedeIngresar() {
+
         return estado != null && estado.puedeIngresar();
     }
 
@@ -145,9 +146,9 @@ public class Propietario extends Usuario {
 
     public void descontarSaldoActual(double monto) throws SistemaTransitoException {
         if (saldoActual < monto) {
-            throw new SistemaTransitoException("Saldo Insuficiente");
+            throw new SistemaTransitoException("Saldo Insuficiente,   Saldo Actual : " + saldoActual + "$");
         }
-        saldoActual -= monto;
+        saldoActual = saldoActual - monto;
     }
 
     public void agregarTransito(Transito t) {
@@ -208,6 +209,30 @@ public class Propietario extends Usuario {
 
         Asignacion nuevaAsignacion = new Asignacion(bonificacion, puesto, new Date());
         this.asignaciones.add(nuevaAsignacion);
+    }
+
+    public int getCantidadTransitosVehiculo(Vehiculo v) {
+        int cantidad = 0;
+        if (v != null && transitos != null) {
+            for (Transito t : transitos) {
+                if (t.getVehiculo().equals(v)) {
+                    cantidad++;
+                }
+            }
+        }
+        return cantidad;
+    }
+
+    public double getMontoTotalVehiculo(Vehiculo v) {
+        double total = 0;
+        if (v != null && transitos != null) {
+            for (Transito t : transitos) {
+                if (t.getVehiculo().equals(v)) {
+                    total += t.getMonto();
+                }
+            }
+        }
+        return total;
     }
 
 }

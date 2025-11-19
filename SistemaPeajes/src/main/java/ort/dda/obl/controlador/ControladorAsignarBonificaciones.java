@@ -57,6 +57,7 @@ public class ControladorAsignarBonificaciones implements Observador {
 	@PostMapping("/bonificaciones")
 	public List<Respuesta> cargarBonificaciones(@SessionAttribute(name = "usuarioAdmin") Object admin)
 			throws UsuarioException {
+
 		// Definimos las bonificaciones disponibles (puede extenderse fácilmente)
 		List<String> bonis = new ArrayList<>();
 		bonis.add(new Trabajadores().getNombre());
@@ -64,6 +65,7 @@ public class ControladorAsignarBonificaciones implements Observador {
 		bonis.add(new Exonerados().getNombre());
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
+
 	}
 
 	@PostMapping("/puestos")
@@ -92,41 +94,37 @@ public class ControladorAsignarBonificaciones implements Observador {
 			@RequestParam(required = false) String bonificacion,
 			@RequestParam(required = false) String nombrePuesto) throws UsuarioException, SistemaTransitoException {
 
-		// se debe especificar una bonificación
 		if (bonificacion == null || bonificacion.trim().isEmpty()) {
 			return Respuesta.lista(new Respuesta("error", "Debe especificar una bonificación"));
 		}
 
-		// Validación: Debe especificar un puesto
 		if (nombrePuesto == null || nombrePuesto.trim().isEmpty()) {
 			return Respuesta.lista(new Respuesta("error", "Debe especificar un puesto"));
 		}
 
-		// Buscar propietario
 		Propietario prop = Fachada.getInstancia().buscarPropXCedula(cedula);
 		if (prop == null) {
 			return Respuesta.lista(new Respuesta("error", "No existe el propietario"));
 		}
 
-		// Buscar puesto
 		PuestoPeaje puesto = Fachada.getInstancia().buscarPuestoPorNombre(nombrePuesto);
 		if (puesto == null) {
 			return Respuesta.lista(new Respuesta("error", "Puesto no encontrado"));
 		}
 
-		// Crear instancia de Bonificación según nombre
 		Bonificacion b = crearBonificacionDesdeNombre(bonificacion);
 		if (b == null) {
 			return Respuesta.lista(new Respuesta("error", "Bonificación no válida"));
 		}
 
-		// Delegar a la Fachada (patrón Fachada + validaciones)
-		Fachada.getInstancia().asignarBonificacionAPropietario(prop, b, puesto);
+		try {
+			Fachada.getInstancia().asignarBonificacionAPropietario(prop, b, puesto);
+		} catch (SistemaTransitoException e) {
+			return Respuesta.lista(new Respuesta("error", e.getMessage()));
+		}
 
-		// Actualizar propietario en vista
 		this.propietarioEnVista = prop;
 
-		// Retornar propietario actualizado
 		PropietarioDTO dto = new PropietarioDTO(prop);
 		return Respuesta.lista(
 				new Respuesta("propietario", dto),
@@ -152,7 +150,6 @@ public class ControladorAsignarBonificaciones implements Observador {
 		return new Respuesta("propietario", new PropietarioDTO(this.propietarioEnVista));
 	}
 
-	// obs--> evento asignacion
 	@Override
 	public void actualizar(Object evento, Observable origen) {
 		if (evento != null && evento.equals("asignacion")) {
