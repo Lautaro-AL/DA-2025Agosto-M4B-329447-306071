@@ -69,12 +69,8 @@ public class ControladorAsignarBonificaciones implements Observador {
 		bonis.add(new Exonerados().getNombre());
 
 		return Respuesta.lista(new Respuesta("bonificaciones", bonis));
-
-<<<<<<< HEAD
 	}
 
-=======
->>>>>>> ab651a6782c70684be290d645d76f4f0b746bfb7
 	@PostMapping("/puestos")
 	public List<Respuesta> cargarPuestos(@SessionAttribute(name = "usuarioAdmin") Object admin)
 			throws UsuarioException {
@@ -91,7 +87,8 @@ public class ControladorAsignarBonificaciones implements Observador {
 		}
 		// Guardamos el propietario en la vista para las posibles notificaciones
 		this.propietarioEnVista = prop;
-		// registrarse como observador del propietario para recibir notificaciones de asignacion
+		// registrarse como observador del propietario para recibir notificaciones de
+		// asignacion
 		prop.agregarObservador(this);
 		PropietarioDTO dto = new PropietarioDTO(prop);
 		return Respuesta.lista(new Respuesta("propietario", dto));
