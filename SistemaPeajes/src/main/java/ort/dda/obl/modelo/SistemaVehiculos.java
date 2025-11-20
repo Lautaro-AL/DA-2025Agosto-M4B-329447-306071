@@ -7,7 +7,6 @@ public class SistemaVehiculos {
     private ArrayList<Vehiculo> vehiculos = new ArrayList<Vehiculo>();
     private ArrayList<Categoria> categorias = new ArrayList<Categoria>();
     private ArrayList<Tarifa> tarifas = new ArrayList<Tarifa>();
-    private ArrayList<Bonificacion> bonificaciones = new ArrayList<Bonificacion>();
 
     public void agregarCategoria(String tipo) {
         categorias.add(new Categoria(tipo));
